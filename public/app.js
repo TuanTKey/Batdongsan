@@ -602,6 +602,77 @@ async function loadMyPropertiesView() {
   }
 }
 
+let selectedPropertyFiles = [];
+
+function handleImageFileSelect(e) {
+  const files = Array.from(e.target.files);
+  if (!files || files.length === 0) return;
+
+  files.forEach(file => {
+    selectedPropertyFiles.push(file);
+  });
+
+  renderImagePreviews();
+  e.target.value = '';
+}
+
+function renderImagePreviews() {
+  const container = document.getElementById('image-preview-container');
+  if (!container) return;
+
+  if (selectedPropertyFiles.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  container.innerHTML = selectedPropertyFiles.map((item, index) => {
+    let src = typeof item === 'string' ? item : URL.createObjectURL(item);
+    return `
+      <div class="preview-thumb-wrapper">
+        <img src="${src}" class="preview-thumb-img">
+        <button type="button" class="thumb-remove-btn" onclick="removeSelectedImage(${index})">&times;</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function removeSelectedImage(index) {
+  selectedPropertyFiles.splice(index, 1);
+  renderImagePreviews();
+}
+
+async function uploadSelectedImages() {
+  const fileObjects = selectedPropertyFiles.filter(item => typeof item !== 'string');
+  const existingUrls = selectedPropertyFiles.filter(item => typeof item === 'string');
+
+  const pastedRaw = document.getElementById('post-images-urls')?.value || '';
+  const pastedUrls = pastedRaw.split(',').map(s => s.trim()).filter(s => s.length > 0);
+
+  let uploadedServerUrls = [];
+
+  if (fileObjects.length > 0) {
+    const formData = new FormData();
+    fileObjects.forEach(file => formData.append('images', file));
+
+    const token = localStorage.getItem('token');
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || result.message || 'Lỗi khi tải ảnh lên');
+    }
+    uploadedServerUrls = result.urls;
+  }
+
+  return [...existingUrls, ...uploadedServerUrls, ...pastedUrls];
+}
+
 function openPostModal(editId = null) {
   if (!currentUser) {
     showToast('Vui lòng đăng nhập để đăng tin bất động sản', 'error');
@@ -612,6 +683,9 @@ function openPostModal(editId = null) {
   const form = document.getElementById('post-form');
   form.reset();
   document.getElementById('post-id').value = '';
+  selectedPropertyFiles = [];
+  renderImagePreviews();
+  if (document.getElementById('post-images-urls')) document.getElementById('post-images-urls').value = '';
 
   if (editId) {
     document.getElementById('post-modal-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-accent"></i> Chỉnh Sửa Bài Đăng`;
@@ -626,8 +700,12 @@ function openPostModal(editId = null) {
       document.getElementById('post-district').value = prop.district || '';
       document.getElementById('post-phone').value = prop.phone;
       document.getElementById('post-address').value = prop.address;
-      document.getElementById('post-images').value = Array.isArray(prop.images) ? prop.images.join(', ') : prop.images;
       document.getElementById('post-description').value = prop.description;
+
+      if (Array.isArray(prop.images)) {
+        selectedPropertyFiles = [...prop.images];
+        renderImagePreviews();
+      }
     }
   } else {
     document.getElementById('post-modal-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-accent"></i> Đăng Tin Bất Động Sản Mới`;
@@ -640,23 +718,29 @@ function openPostModal(editId = null) {
 async function handlePostSubmit(e) {
   e.preventDefault();
   const id = document.getElementById('post-id').value;
-  const rawImages = document.getElementById('post-images').value;
-  const images = rawImages.split(',').map(s => s.trim()).filter(s => s.length > 0);
-
-  const payload = {
-    title: document.getElementById('post-title').value.trim(),
-    type: document.getElementById('post-type').value,
-    city: document.getElementById('post-city').value,
-    price: Number(document.getElementById('post-price').value),
-    area: Number(document.getElementById('post-area').value),
-    district: document.getElementById('post-district').value.trim(),
-    phone: document.getElementById('post-phone').value.trim(),
-    address: document.getElementById('post-address').value.trim(),
-    images,
-    description: document.getElementById('post-description').value.trim()
-  };
 
   try {
+    showToast('Đang xử lý hình ảnh...', 'info');
+    const images = await uploadSelectedImages();
+
+    if (images.length === 0) {
+      showToast('Vui lòng chọn hoặc tải lên ít nhất 1 hình ảnh bất động sản', 'error');
+      return;
+    }
+
+    const payload = {
+      title: document.getElementById('post-title').value.trim(),
+      type: document.getElementById('post-type').value,
+      city: document.getElementById('post-city').value,
+      price: Number(document.getElementById('post-price').value),
+      area: Number(document.getElementById('post-area').value),
+      district: document.getElementById('post-district').value.trim(),
+      phone: document.getElementById('post-phone').value.trim(),
+      address: document.getElementById('post-address').value.trim(),
+      images,
+      description: document.getElementById('post-description').value.trim()
+    };
+
     let res;
     if (id) {
       res = await fetchAPI(`/properties/${id}`, { method: 'PUT', body: JSON.stringify(payload) });

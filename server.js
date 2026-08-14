@@ -13,6 +13,39 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const multer = require('multer');
+const fs = require('fs');
+
+// Ensure public/uploads directory exists
+const uploadsDir = path.join(__dirname, 'public', 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Multer Storage Configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname) || '.jpg';
+    const filename = `bds-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
+    cb(null, filename);
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit per image
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Chỉ chấp nhận file hình ảnh (JPG, PNG, WEBP, GIF)'), false);
+    }
+  }
+});
+
 // Middleware: Authentication Token
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -515,6 +548,21 @@ app.get('/api/admin/stats', authenticateToken, requireAdmin, (req, res) => {
       });
     });
   });
+});
+
+// ==========================================
+// FILE UPLOAD API ROUTE (Multi Image Upload)
+// ==========================================
+app.post('/api/upload', authenticateToken, upload.array('images', 10), (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'Vui lòng chọn ít nhất 1 hình ảnh' });
+    }
+    const urls = req.files.map(file => `/uploads/${file.filename}`);
+    res.json({ message: 'Tải ảnh lên thành công', urls });
+  } catch (err) {
+    res.status(500).json({ error: 'Lỗi khi tải ảnh lên máy chủ' });
+  }
 });
 
 // Get All Users (Admin)

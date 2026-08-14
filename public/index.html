@@ -498,8 +498,23 @@
         </div>
 
         <div class="form-group">
-          <label>Link hình ảnh (Phân cách bằng dấu phẩy)</label>
-          <textarea id="post-images" rows="2" placeholder="VD: https://images.unsplash.com/photo-1545324418-cc1a3fa10c00, https://images.unsplash.com/photo-1502672260266-1c1ef2d93688"></textarea>
+          <label><i class="fa-solid fa-camera text-primary"></i> Hình ảnh bất động sản * (Tải lên từ điện thoại / máy tính)</label>
+          
+          <div class="upload-dropzone" id="upload-dropzone" onclick="document.getElementById('post-file-input').click()">
+            <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+            <p class="upload-text"><strong>Bấm để chọn ảnh từ thiết bị của bạn</strong></p>
+            <span class="upload-subtext">Hỗ trợ JPG, PNG, WEBP, GIF (Chọn cùng lúc nhiều ảnh)</span>
+            <input type="file" id="post-file-input" accept="image/*" multiple style="display: none;" onchange="handleImageFileSelect(event)">
+          </div>
+
+          <!-- Thumbnails Preview Container -->
+          <div class="image-preview-container" id="image-preview-container"></div>
+          
+          <!-- Optional URL input for pasting web links -->
+          <details class="url-input-details">
+            <summary><i class="fa-solid fa-link"></i> Hoặc dán link hình ảnh online từ internet</summary>
+            <textarea id="post-images-urls" rows="2" placeholder="VD: https://images.unsplash.com/photo-1545324418-cc1a3fa10c00" style="margin-top: 8px;"></textarea>
+          </details>
         </div>
 
         <div class="form-group">
