@@ -823,6 +823,10 @@ app.get('*', (req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ error: 'API endpoint không tồn tại' });
   }
+  const ext = path.extname(req.path);
+  if (ext && ext !== '.html') {
+    return res.status(404).send('File not found');
+  }
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
