@@ -57,10 +57,15 @@ if (isPostgres) {
     serialize: (fn) => fn()
   };
 
-  // Create PostgreSQL Schema & Seed Data
+  // Create PostgreSQL Schema & Seed Data ONCE
   const initPgSchema = async () => {
     try {
       await pool.query(`
+        CREATE TABLE IF NOT EXISTS system_settings (
+          key VARCHAR(100) PRIMARY KEY,
+          val TEXT
+        );
+
         CREATE TABLE IF NOT EXISTS users (
           id SERIAL PRIMARY KEY,
           name VARCHAR(255) NOT NULL,
@@ -136,9 +141,9 @@ if (isPostgres) {
       // Delete old legacy admin if present
       await pool.query("DELETE FROM users WHERE email = 'admin@batdongsan.vn'");
 
-      // Seed Properties if empty
-      const checkProps = await pool.query('SELECT COUNT(*) FROM properties');
-      if (parseInt(checkProps.rows[0].count, 10) === 0) {
+      // Seed Properties ONLY ONCE using system_settings flag
+      const checkSeeded = await pool.query("SELECT val FROM system_settings WHERE key = 'properties_seeded'");
+      if (checkSeeded.rows.length === 0) {
         const adminRes = await pool.query('SELECT id FROM users WHERE email = $1', ['admin@bdshungyen.vn']);
         const adminId = adminRes.rows[0].id;
 
@@ -218,6 +223,9 @@ if (isPostgres) {
             [p.user_id, p.title, p.description, p.type, p.price, p.area, p.city, p.district, p.address, p.phone, p.images, p.lat, p.lng, p.status]
           );
         }
+
+        // Mark as seeded permanently
+        await pool.query("INSERT INTO system_settings (key, val) VALUES ('properties_seeded', 'true')");
       }
       console.log('Render PostgreSQL Database connected and initialized successfully!');
     } catch (err) {
@@ -235,6 +243,13 @@ if (isPostgres) {
 
   sqliteInstance.serialize(() => {
     sqliteInstance.run('PRAGMA foreign_keys = ON;');
+
+    sqliteInstance.run(`
+      CREATE TABLE IF NOT EXISTS system_settings (
+        key TEXT PRIMARY KEY,
+        val TEXT
+      )
+    `);
 
     sqliteInstance.run(`
       CREATE TABLE IF NOT EXISTS users (
@@ -328,9 +343,8 @@ if (isPostgres) {
 
       sqliteInstance.run("DELETE FROM users WHERE email = 'admin@batdongsan.vn'");
 
-      sqliteInstance.get('SELECT COUNT(*) as count FROM users', async (err, row) => {
-        if (err) return;
-        if (row.count === 0) {
+      sqliteInstance.get("SELECT val FROM system_settings WHERE key = 'properties_seeded'", (err, row) => {
+        if (!row) {
           sqliteInstance.run(
             `INSERT INTO users (name, email, password, phone, avatar, role) VALUES (?, ?, ?, ?, ?, ?)`,
             ['Nguyễn Văn An', 'nguyenvana@gmail.com', userPassword, '0914888999', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80', 'user'],
@@ -338,7 +352,10 @@ if (isPostgres) {
               const userId = this.lastID;
               sqliteInstance.run(
                 `INSERT INTO properties (user_id, title, description, type, price, area, city, district, address, phone, images, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                [userId, 'Căn hộ cao cấp Ecopark Swanlake Onsen Văn Giang Hưng Yên', 'Căn hộ khoáng nóng chuẩn Nhật Bản', 'căn hộ', 2850000000, 68, 'Hưng Yên', 'Văn Giang', 'KĐT Ecopark', '0914888999', '["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00"]', 'approved']
+                [userId, 'Căn hộ cao cấp Ecopark Swanlake Onsen Văn Giang Hưng Yên', 'Căn hộ khoáng nóng chuẩn Nhật Bản', 'căn hộ', 2850000000, 68, 'Hưng Yên', 'Văn Giang', 'KĐT Ecopark', '0914888999', '["https://images.unsplash.com/photo-1545324418-cc1a3fa10c00"]', 'approved'],
+                function () {
+                  sqliteInstance.run("INSERT INTO system_settings (key, val) VALUES ('properties_seeded', 'true')");
+                }
               );
             }
           );
