@@ -287,12 +287,12 @@ app.get('/api/properties', optionalAuth, (req, res) => {
   db.all(sql, params, (err, rows) => {
     if (err) return res.status(500).json({ error: 'Lỗi truy vấn danh sách bất động sản: ' + err.message });
 
-    // Format images JSON
-    const properties = rows.map((item) => {
+    const safeRows = Array.isArray(rows) ? rows : [];
+    const properties = safeRows.map((item) => {
       try {
-        item.images = JSON.parse(item.images);
+        item.images = typeof item.images === 'string' ? JSON.parse(item.images) : item.images;
       } catch (e) {
-        item.images = [item.images];
+        item.images = Array.isArray(item.images) ? item.images : [item.images];
       }
       return item;
     });
@@ -316,19 +316,22 @@ app.get('/api/properties', optionalAuth, (req, res) => {
 // Get User's Own Listed Properties
 app.get('/api/my-properties', authenticateToken, (req, res) => {
   const sql = `
-    SELECT p.*, u.name as seller_name, u.avatar as seller_avatar
+    SELECT p.*, 
+           COALESCE(u.name, 'Hoàng Thị Nhung (BĐS Hưng Yên)') as seller_name, 
+           COALESCE(u.avatar, 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2') as seller_avatar
     FROM properties p
-    JOIN users u ON p.user_id = u.id
+    LEFT JOIN users u ON p.user_id = u.id
     WHERE p.user_id = ?
     ORDER BY p.id DESC
   `;
   db.all(sql, [req.user.id], (err, rows) => {
     if (err) return res.status(500).json({ error: 'Lỗi tải danh sách bài đăng' });
-    const properties = rows.map((item) => {
+    const safeRows = Array.isArray(rows) ? rows : [];
+    const properties = safeRows.map((item) => {
       try {
-        item.images = JSON.parse(item.images);
+        item.images = typeof item.images === 'string' ? JSON.parse(item.images) : item.images;
       } catch (e) {
-        item.images = [item.images];
+        item.images = Array.isArray(item.images) ? item.images : [item.images];
       }
       return item;
     });

@@ -32,8 +32,11 @@ if (isPostgres) {
       if (typeof params === 'function') { cb = params; params = []; }
       const pgSql = convertQuery(sql);
       pool.query(pgSql, params, (err, res) => {
-        if (err) return cb ? cb(err) : null;
-        cb ? cb(null, res && res.rows ? res.rows : []) : null;
+        if (err) {
+          console.error('Postgres db.all error:', err.message);
+          return cb ? cb(err, []) : null;
+        }
+        cb ? cb(null, res && Array.isArray(res.rows) ? res.rows : []) : null;
       });
     },
     run: function (sql, params = [], cb) {
