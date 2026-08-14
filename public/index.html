@@ -265,9 +265,14 @@
 
     <!-- VIEW 4: ADMIN DASHBOARD -->
     <section id="view-admin" class="view-section container">
-      <div class="page-header">
-        <h2><i class="fa-solid fa-shield-halved text-accent"></i> Trang Quản Trị Hệ Thống (Admin)</h2>
-        <p>Thống kê, chỉnh sửa, xóa tất cả tin đăng bất động sản và quản lý người dùng</p>
+      <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h2><i class="fa-solid fa-shield-halved text-accent"></i> Trang Quản Trị Hệ Thống (Admin)</h2>
+          <p>Thống kê, thêm mới, chỉnh sửa, xóa tất cả tin đăng bất động sản và quản lý người dùng</p>
+        </div>
+        <button class="btn btn-accent" onclick="openPostModal()" style="padding: 10px 20px; font-size: 0.95rem; font-weight: 700; box-shadow: var(--shadow-sm);">
+          <i class="fa-solid fa-plus-circle"></i> + Đăng Tin Mới (Admin)
+        </button>
       </div>
 
       <!-- Stats Overview Cards -->
@@ -307,6 +312,12 @@
 
       <!-- Admin Tab Content 1: Moderation Queue -->
       <div id="admin-tab-mod" class="admin-tab-content active">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+          <h4 style="margin: 0; font-size: 1.1rem; color: var(--dark);"><i class="fa-solid fa-building text-primary"></i> Danh sách tất cả bất động sản hệ thống</h4>
+          <button class="btn btn-accent" onclick="openPostModal()" style="padding: 8px 16px; font-size: 0.88rem; font-weight: 700;">
+            <i class="fa-solid fa-plus"></i> Đăng tin mới
+          </button>
+        </div>
         <div class="table-responsive">
           <table class="admin-table">
             <thead>
