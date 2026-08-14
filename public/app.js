@@ -778,11 +778,10 @@ async function deleteProperty(id) {
 async function loadAdminDashboard() {
   try {
     const stats = await fetchAPI('/admin/stats');
-    document.getElementById('stat-total-users').textContent = stats.total_users;
-    document.getElementById('stat-total-props').textContent = stats.total_properties;
-    document.getElementById('stat-pending-props').textContent = stats.pending_properties;
-    document.getElementById('stat-approved-props').textContent = stats.approved_properties;
-    document.getElementById('mod-pending-count').textContent = stats.pending_properties;
+    if (document.getElementById('stat-total-users')) document.getElementById('stat-total-users').textContent = stats.total_users;
+    if (document.getElementById('stat-total-props')) document.getElementById('stat-total-props').textContent = stats.total_properties;
+    if (document.getElementById('stat-approved-props')) document.getElementById('stat-approved-props').textContent = stats.approved_properties;
+    if (document.getElementById('mod-pending-count')) document.getElementById('mod-pending-count').textContent = stats.total_properties;
 
     loadAdminModerationTable();
     loadAdminUsersTable();
@@ -811,10 +810,6 @@ async function loadAdminModerationTable() {
 
     tbody.innerHTML = list.map(item => {
       const img = Array.isArray(item.images) && item.images.length > 0 ? item.images[0] : '';
-      let statusBadge = '<span class="status-badge status-approved">Đã duyệt</span>';
-      if (item.status === 'pending') statusBadge = '<span class="status-badge status-pending">Chờ duyệt</span>';
-      if (item.status === 'rejected') statusBadge = '<span class="status-badge status-rejected">Đã từ chối</span>';
-
       return `
         <tr>
           <td><strong>#${item.id}</strong></td>
@@ -827,11 +822,11 @@ async function loadAdminModerationTable() {
           <td>${item.seller_name}<br><small class="text-muted">${item.seller_email}</small></td>
           <td><strong class="text-primary">${formatPrice(item.price)}</strong><br><small>${item.area} m²</small></td>
           <td>${item.city}</td>
-          <td>${statusBadge}</td>
+          <td><span class="status-badge status-approved">Hiển thị</span></td>
           <td>
             <div style="display: flex; gap: 6px;">
-              ${item.status !== 'approved' ? `<button class="btn btn-accent" style="padding: 6px 12px; font-size: 0.8rem;" onclick="updatePropStatus(${item.id}, 'approved')"><i class="fa-solid fa-check"></i> Duyệt</button>` : ''}
-              ${item.status !== 'rejected' ? `<button class="btn btn-outline text-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="updatePropStatus(${item.id}, 'rejected')"><i class="fa-solid fa-xmark"></i> Từ chối</button>` : ''}
+              <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openPostModal(${item.id})"><i class="fa-solid fa-pen-to-square"></i> Sửa</button>
+              <button class="btn btn-outline text-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="deleteAdminProperty(${item.id})"><i class="fa-solid fa-trash"></i> Xóa</button>
               <button class="btn btn-dark" style="padding: 6px 10px; font-size: 0.8rem;" onclick="openDetailModal(${item.id})"><i class="fa-solid fa-eye"></i></button>
             </div>
           </td>
@@ -843,14 +838,13 @@ async function loadAdminModerationTable() {
   }
 }
 
-async function updatePropStatus(id, status) {
+async function deleteAdminProperty(id) {
+  if (!confirm('Bạn với tư cách Admin có chắc chắn muốn xóa bài đăng bất động sản này?')) return;
   try {
-    const res = await fetchAPI(`/admin/properties/${id}/status`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status })
-    });
-    showToast(res.message, 'success');
+    const res = await fetchAPI(`/properties/${id}`, { method: 'DELETE' });
+    showToast(res.message, 'info');
     loadAdminDashboard();
+    loadProperties();
   } catch (err) {
     showToast(err.message, 'error');
   }

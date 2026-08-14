@@ -375,8 +375,8 @@ app.post('/api/properties', authenticateToken, (req, res) => {
     'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1000&q=80'
   ];
 
-  // Admins' posts automatically approved; Users' posts start with 'pending'
-  const status = req.user.role === 'admin' ? 'approved' : 'pending';
+  // All posts are published immediately ('approved')
+  const status = 'approved';
 
   const sql = `
     INSERT INTO properties (user_id, title, description, type, price, area, city, district, address, phone, images, lat, lng, status)
@@ -397,14 +397,14 @@ app.post('/api/properties', authenticateToken, (req, res) => {
       address,
       phone,
       JSON.stringify(imageList),
-      lat || 16.0544,
-      lng || 108.2022,
+      lat || 20.651,
+      lng || 106.052,
       status
     ],
     function (err) {
       if (err) return res.status(500).json({ error: 'Lỗi khi đăng tin: ' + err.message });
       res.status(201).json({
-        message: status === 'approved' ? 'Đăng tin bất động sản thành công!' : 'Tin của bạn đã được gửi và đang chờ Admin duyệt.',
+        message: 'Đăng tin bất động sản thành công!',
         id: this.lastID,
         status
       });

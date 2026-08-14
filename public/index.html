@@ -267,7 +267,7 @@
     <section id="view-admin" class="view-section container">
       <div class="page-header">
         <h2><i class="fa-solid fa-shield-halved text-accent"></i> Trang Quản Trị Hệ Thống (Admin)</h2>
-        <p>Thống kê, kiểm duyệt bài đăng và quản lý tài khoản thành viên</p>
+        <p>Thống kê, chỉnh sửa, xóa tất cả tin đăng bất động sản và quản lý người dùng</p>
       </div>
 
       <!-- Stats Overview Cards -->
@@ -287,16 +287,9 @@
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon icon-orange"><i class="fa-solid fa-clock"></i></div>
-          <div class="stat-info">
-            <span class="stat-label">Bài chờ duyệt</span>
-            <h3 id="stat-pending-props" class="stat-number">0</h3>
-          </div>
-        </div>
-        <div class="stat-card">
           <div class="stat-icon icon-purple"><i class="fa-solid fa-circle-check"></i></div>
           <div class="stat-info">
-            <span class="stat-label">Bài đã duyệt</span>
+            <span class="stat-label">Tin đang hiển thị</span>
             <h3 id="stat-approved-props" class="stat-number">0</h3>
           </div>
         </div>
@@ -305,7 +298,7 @@
       <!-- Admin Tabs -->
       <div class="admin-tabs">
         <button class="admin-tab-btn active" id="tab-btn-mod" onclick="switchAdminTab('mod')">
-          <i class="fa-solid fa-clipboard-check"></i> Duyệt Tin Bài (<span id="mod-pending-count">0</span>)
+          <i class="fa-solid fa-list-check"></i> Quản Lý Tất Cả Bài Đăng (<span id="mod-pending-count">0</span>)
         </button>
         <button class="admin-tab-btn" id="tab-btn-users" onclick="switchAdminTab('users')">
           <i class="fa-solid fa-users-gear"></i> Quản Lý Người Dùng
