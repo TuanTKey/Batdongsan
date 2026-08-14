@@ -132,10 +132,10 @@ if (isPostgres) {
       if (checkAdmin.rows.length === 0) {
         await pool.query(
           `INSERT INTO users (name, email, password, phone, avatar, role) VALUES ($1, $2, $3, $4, $5, $6)`,
-          ['Quản Trị Viên (BĐS Hưng Yên)', 'admin@bdshungyen.vn', adminPassword, '0905123456', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80', 'admin']
+          ['Hoàng Thị Nhung (BĐS Hưng Yên)', 'admin@bdshungyen.vn', adminPassword, '0905123456', 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80', 'admin']
         );
       } else {
-        await pool.query('UPDATE users SET password = $1, role = $2 WHERE email = $3', [adminPassword, 'admin', 'admin@bdshungyen.vn']);
+        await pool.query('UPDATE users SET name = $1, password = $2, role = $3 WHERE email = $4', ['Hoàng Thị Nhung (BĐS Hưng Yên)', adminPassword, 'admin', 'admin@bdshungyen.vn']);
       }
 
       // Delete old legacy admin if present
@@ -334,10 +334,10 @@ if (isPostgres) {
         if (!row) {
           sqliteInstance.run(
             `INSERT INTO users (name, email, password, phone, avatar, role) VALUES (?, ?, ?, ?, ?, ?)`,
-            ['Quản Trị Viên (BĐS Hưng Yên)', 'admin@bdshungyen.vn', adminPassword, '0905123456', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80', 'admin']
+            ['Hoàng Thị Nhung (BĐS Hưng Yên)', 'admin@bdshungyen.vn', adminPassword, '0905123456', 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80', 'admin']
           );
         } else {
-          sqliteInstance.run('UPDATE users SET password = ?, role = ? WHERE email = ?', [adminPassword, 'admin', 'admin@bdshungyen.vn']);
+          sqliteInstance.run('UPDATE users SET name = ?, password = ?, role = ? WHERE email = ?', ['Hoàng Thị Nhung (BĐS Hưng Yên)', adminPassword, 'admin', 'admin@bdshungyen.vn']);
         }
       });
 
