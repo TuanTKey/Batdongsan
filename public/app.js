@@ -647,6 +647,15 @@ function removeSelectedImage(index) {
   renderImagePreviews();
 }
 
+function readFileAsBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+    reader.readAsDataURL(file);
+  });
+}
+
 async function uploadSelectedImages() {
   const fileObjects = selectedPropertyFiles.filter(item => typeof item !== 'string');
   const existingUrls = selectedPropertyFiles.filter(item => typeof item === 'string');
@@ -657,23 +666,7 @@ async function uploadSelectedImages() {
   let uploadedServerUrls = [];
 
   if (fileObjects.length > 0) {
-    const formData = new FormData();
-    fileObjects.forEach(file => formData.append('images', file));
-
-    const token = localStorage.getItem('token');
-    const response = await fetch('/api/upload', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: formData
-    });
-
-    const result = await response.json();
-    if (!response.ok) {
-      throw new Error(result.error || result.message || 'Lỗi khi tải ảnh lên');
-    }
-    uploadedServerUrls = result.urls;
+    uploadedServerUrls = await Promise.all(fileObjects.map(file => readFileAsBase64(file)));
   }
 
   return [...existingUrls, ...uploadedServerUrls, ...pastedUrls];
@@ -999,26 +992,8 @@ async function handleProfileUpdate(e) {
 
   try {
     if (selectedAvatarFile) {
-      showToast('Đang tải ảnh đại diện lên...', 'info');
-      const formData = new FormData();
-      formData.append('images', selectedAvatarFile);
-
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      });
-
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.error || 'Lỗi khi tải ảnh đại diện');
-      }
-      if (result.urls && result.urls.length > 0) {
-        avatarUrl = result.urls[0];
-      }
+      showToast('Đang xử lý lưu ảnh đại diện...', 'info');
+      avatarUrl = await readFileAsBase64(selectedAvatarFile);
     }
 
     const payload = {
