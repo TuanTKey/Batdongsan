@@ -125,14 +125,16 @@ function updateAuthUI(user) {
       roleBadge.style.color = '#d97706';
 
       // Admin mode
-      if (navCatalog) navCatalog.style.display = 'none';
-      if (navFavorites) navFavorites.style.display = 'none';
+      if (navCatalog) navCatalog.style.display = 'flex';
+      if (navFavorites) navFavorites.style.display = 'flex';
       if (navChat) navChat.style.display = 'flex';
       if (navMyProps) navMyProps.style.display = 'none';
-      if (btnPost) btnPost.style.display = 'none';
+      if (btnPost) btnPost.style.display = 'inline-flex';
       if (navAdmin) navAdmin.style.display = 'flex';
       if (dropdownMyPropsLink) dropdownMyPropsLink.style.display = 'none';
       if (dropdownAdminLink) dropdownAdminLink.style.display = 'flex';
+      const mobNavPost = document.getElementById('mob-nav-post');
+      if (mobNavPost) mobNavPost.style.display = 'flex';
     } else {
       roleBadge.textContent = 'Thành viên';
       roleBadge.style.background = '#dbeafe';
@@ -141,11 +143,13 @@ function updateAuthUI(user) {
       if (navCatalog) navCatalog.style.display = 'flex';
       if (navFavorites) navFavorites.style.display = 'flex';
       if (navChat) navChat.style.display = 'flex';
-      if (navMyProps) navMyProps.style.display = 'flex';
-      if (btnPost) btnPost.style.display = 'inline-flex';
+      if (navMyProps) navMyProps.style.display = 'none';
+      if (btnPost) btnPost.style.display = 'none';
       if (navAdmin) navAdmin.style.display = 'none';
-      if (dropdownMyPropsLink) dropdownMyPropsLink.style.display = 'flex';
+      if (dropdownMyPropsLink) dropdownMyPropsLink.style.display = 'none';
       if (dropdownAdminLink) dropdownAdminLink.style.display = 'none';
+      const mobNavPost = document.getElementById('mob-nav-post');
+      if (mobNavPost) mobNavPost.style.display = 'none';
     }
   } else {
     guestActions.style.display = 'flex';
@@ -154,10 +158,12 @@ function updateAuthUI(user) {
     if (navFavorites) navFavorites.style.display = 'flex';
     if (navChat) navChat.style.display = 'flex';
     if (navMyProps) navMyProps.style.display = 'none';
-    if (btnPost) btnPost.style.display = 'inline-flex';
+    if (btnPost) btnPost.style.display = 'none';
     if (navAdmin) navAdmin.style.display = 'none';
     if (dropdownMyPropsLink) dropdownMyPropsLink.style.display = 'none';
     if (dropdownAdminLink) dropdownAdminLink.style.display = 'none';
+    const mobNavPost = document.getElementById('mob-nav-post');
+    if (mobNavPost) mobNavPost.style.display = 'none';
   }
 }
 
@@ -675,8 +681,13 @@ async function uploadSelectedImages() {
 
 function openPostModal(editId = null) {
   if (!currentUser) {
-    showToast('Vui lòng đăng nhập để đăng tin bất động sản', 'error');
+    showToast('Vui lòng đăng nhập với tài khoản Admin', 'error');
     openModal('login-modal');
+    return;
+  }
+
+  if (currentUser.role !== 'admin') {
+    showToast('Chỉ Quản trị viên (Admin) mới có quyền đăng hoặc sửa bài bất động sản', 'error');
     return;
   }
 

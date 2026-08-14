@@ -363,8 +363,12 @@ app.get('/api/properties/:id', optionalAuth, (req, res) => {
   });
 });
 
-// Create New Property Listing
+// Create New Property Listing (ADMIN ONLY)
 app.post('/api/properties', authenticateToken, (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Chỉ Quản trị viên (Admin) mới có quyền đăng tin bất động sản mới' });
+  }
+
   const { title, description, type, price, area, city, district, address, phone, images, lat, lng } = req.body;
 
   if (!title || !description || !type || !price || !area || !city || !address || !phone) {
@@ -375,7 +379,6 @@ app.post('/api/properties', authenticateToken, (req, res) => {
     'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1000&q=80'
   ];
 
-  // All posts are published immediately ('approved')
   const status = 'approved';
 
   const sql = `
@@ -412,17 +415,17 @@ app.post('/api/properties', authenticateToken, (req, res) => {
   );
 });
 
-// Update Property Listing
+// Update Property Listing (ADMIN ONLY)
 app.put('/api/properties/:id', authenticateToken, (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Chỉ Quản trị viên (Admin) mới có quyền chỉnh sửa bài đăng' });
+  }
+
   const propId = req.params.id;
   const { title, description, type, price, area, city, district, address, phone, images } = req.body;
 
-  // Check ownership or admin
   db.get('SELECT user_id FROM properties WHERE id = ?', [propId], (err, prop) => {
     if (err || !prop) return res.status(404).json({ error: 'Không tìm thấy bài đăng' });
-    if (prop.user_id !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Bạn không có quyền chỉnh sửa bài đăng này' });
-    }
 
     const imageList = Array.isArray(images) && images.length > 0 ? JSON.stringify(images) : null;
     let sql = `
@@ -446,15 +449,16 @@ app.put('/api/properties/:id', authenticateToken, (req, res) => {
   });
 });
 
-// Delete Property Listing
+// Delete Property Listing (ADMIN ONLY)
 app.delete('/api/properties/:id', authenticateToken, (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Chỉ Quản trị viên (Admin) mới có quyền xóa bài đăng' });
+  }
+
   const propId = req.params.id;
 
   db.get('SELECT user_id FROM properties WHERE id = ?', [propId], (err, prop) => {
     if (err || !prop) return res.status(404).json({ error: 'Không tìm thấy bài đăng' });
-    if (prop.user_id !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Bạn không có quyền xóa bài đăng này' });
-    }
 
     db.run('DELETE FROM properties WHERE id = ?', [propId], function (dErr) {
       if (dErr) return res.status(500).json({ error: 'Lỗi khi xóa bài đăng' });
