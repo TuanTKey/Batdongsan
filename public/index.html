@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BatDongSan Pro - System Management & Trading Platform</title>
-  <meta name="description" content="Kênh thông tin bất động sản hàng đầu Việt Nam - Tìm kiếm nhà đất, căn hộ, biệt thự, đất nền">
+  <title>Bất Động Sản Hưng Yên - Kênh Mua Bán Nhà Đất & Dự Án Hưng Yên</title>
+  <meta name="description" content="Kênh thông tin bất động sản hàng đầu Hưng Yên - Tìm kiếm nhà đất, đất nền Văn Giang, Ecopark, Ocean Park 2-3, Mỹ Hào, TP. Hưng Yên">
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,8 +25,8 @@
   <header class="navbar">
     <div class="container nav-wrapper">
       <a href="#" class="brand-logo" onclick="handleLogoClick(); return false;">
-        <i class="fa-solid fa-building-circle-check"></i>
-        <span>BatDongSan<strong class="text-accent">PRO</strong></span>
+        <i class="fa-solid fa-building-circle-check text-accent"></i>
+        <span>BĐS <strong class="text-accent">HƯNG YÊN</strong></span>
       </a>
 
       <nav class="nav-menu" id="nav-menu">
@@ -53,15 +53,15 @@
         </button>
         
         <div id="guest-actions" class="auth-buttons">
-          <button class="btn btn-outline" onclick="openModal('login-modal')">Đăng nhập</button>
-          <button class="btn btn-dark" onclick="openModal('register-modal')">Đăng ký</button>
+          <button class="btn btn-outline btn-sm" onclick="openModal('login-modal')">Đăng nhập</button>
+          <button class="btn btn-accent btn-sm" onclick="openModal('register-modal')">Đăng ký</button>
         </div>
 
         <div id="user-actions" class="user-profile-menu" style="display: none;">
           <div class="avatar-wrapper" onclick="toggleUserDropdown()">
             <img id="user-avatar-img" src="" alt="User Avatar" class="user-avatar">
             <span id="user-display-name" class="user-name">User</span>
-            <i class="fa-solid fa-chevron-down"></i>
+            <i class="fa-solid fa-chevron-down nav-chevron"></i>
           </div>
           <div class="dropdown-menu" id="user-dropdown">
             <div class="dropdown-header">
@@ -76,10 +76,6 @@
             <a href="#" class="text-danger" onclick="logout(); return false;"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
           </div>
         </div>
-
-        <button class="mobile-toggle-btn" id="mobile-toggle-btn" onclick="toggleMobileNav()">
-          <i class="fa-solid fa-bars"></i>
-        </button>
       </div>
     </div>
   </header>
@@ -119,15 +115,15 @@
       <div class="hero-banner">
         <div class="hero-bg-overlay"></div>
         <div class="container hero-content">
-          <h1 class="hero-title">Tìm Kiếm Nơi An Cư & Đầu Tư Lý Tưởng</h1>
-          <p class="hero-subtitle">Hàng ngàn bất động sản xác thực tại Đà Nẵng, Hà Nội, TP.HCM</p>
+          <h1 class="hero-title">Bất Động Sản <span class="text-accent">Hưng Yên</span></h1>
+          <p class="hero-subtitle">Kênh thông tin nhà đất, đất nền, biệt thự, căn hộ Ecopark, Ocean Park 2 & 3 tại Hưng Yên</p>
 
           <!-- Search Filter Box -->
           <div class="search-filter-card">
             <div class="filter-primary-row">
               <div class="input-with-icon search-input-group">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="filter-keyword" placeholder="Nhập từ khóa, tên đường, dự án (VD: Sơn Trà, Lê Duẩn...)" onkeyup="handleSearchKeyup(event)">
+                <input type="text" id="filter-keyword" placeholder="Nhập từ khóa, khu vực (VD: Ecopark, Văn Giang, Mỹ Hào...)" onkeyup="handleSearchKeyup(event)">
               </div>
               <button class="btn btn-accent btn-search" onclick="applyFilters()">
                 <i class="fa-solid fa-filter"></i> Tìm kiếm
@@ -137,12 +133,19 @@
             <div class="filter-secondary-grid">
               <!-- Location -->
               <div class="filter-item">
-                <label><i class="fa-solid fa-location-dot"></i> Địa điểm</label>
+                <label><i class="fa-solid fa-location-dot"></i> Khu vực Hưng Yên</label>
                 <select id="filter-city" onchange="applyFilters()">
-                  <option value="all">Tất cả tỉnh thành</option>
-                  <option value="Đà Nẵng">Đà Nẵng</option>
-                  <option value="Hà Nội">Hà Nội</option>
-                  <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
+                  <option value="all">Tất cả khu vực Hưng Yên</option>
+                  <option value="Văn Giang">Huyện Văn Giang (Ecopark, Ocean Park)</option>
+                  <option value="Mỹ Hào">Thị xã Mỹ Hào</option>
+                  <option value="TP. Hưng Yên">Thành phố Hưng Yên</option>
+                  <option value="Văn Lâm">Huyện Văn Lâm (Như Quỳnh)</option>
+                  <option value="Yên Mỹ">Huyện Yên Mỹ</option>
+                  <option value="Khoái Châu">Huyện Khoái Châu</option>
+                  <option value="Tiên Lữ">Huyện Tiên Lữ</option>
+                  <option value="Kim Động">Huyện Kim Động</option>
+                  <option value="Phù Cừ">Huyện Phù Cừ</option>
+                  <option value="Ân Thi">Huyện Ân Thi</option>
                 </select>
               </div>
 
@@ -151,11 +154,11 @@
                 <label><i class="fa-solid fa-house"></i> Loại bất động sản</label>
                 <select id="filter-type" onchange="applyFilters()">
                   <option value="all">Tất cả loại hình</option>
-                  <option value="căn hộ">Căn hộ</option>
-                  <option value="nhà ở">Nhà ở</option>
-                  <option value="đất nền">Đất nền</option>
-                  <option value="biệt thự">Biệt thự</option>
-                  <option value="mặt bằng kinh doanh">Mặt bằng kinh doanh</option>
+                  <option value="căn hộ">Căn hộ chung cư</option>
+                  <option value="nhà ở">Nhà ở thổ cư</option>
+                  <option value="đất nền">Đất nền dự án / thổ cư</option>
+                  <option value="biệt thự">Biệt thự / Nhà vườn</option>
+                  <option value="mặt bằng kinh doanh">Mặt bằng / Shophouse / Kho xưởng</option>
                 </select>
               </div>
 
@@ -187,18 +190,21 @@
 
             <!-- Quick Filter Presets -->
             <div class="quick-tags">
-              <span class="quick-tag-label"><i class="fa-solid fa-bolt"></i> Gợi ý tìm nhanh:</span>
-              <button class="tag-btn" onclick="applyPresetFilter('Đà Nẵng', 'căn hộ', '1000000000-3000000000', '50-100')">
-                🔥 Đà Nẵng | Căn hộ | 1-3 tỷ | 50-100 m²
+              <span class="quick-tag-label"><i class="fa-solid fa-bolt"></i> Gợi ý nhanh:</span>
+              <button class="tag-btn" onclick="applyPresetFilter('Văn Giang', 'đất nền', 'all', 'all')">
+                🔥 Đất nền Văn Giang
               </button>
-              <button class="tag-btn" onclick="applyPresetFilter('Đà Nẵng', 'đất nền', 'all', 'all')">
-                📍 Đất nền Đà Nẵng
+              <button class="tag-btn" onclick="applyPresetFilter('Văn Giang', 'căn hộ', 'all', 'all')">
+                🌸 Căn hộ Ecopark
               </button>
-              <button class="tag-btn" onclick="applyPresetFilter('TP. Hồ Chí Minh', 'all', 'all', 'all')">
-                🏙️ TP. Hồ Chí Minh
+              <button class="tag-btn" onclick="applyPresetFilter('Văn Giang', 'biệt thự', 'all', 'all')">
+                🏰 Ocean Park 2 & 3
+              </button>
+              <button class="tag-btn" onclick="applyPresetFilter('TP. Hưng Yên', 'all', 'all', 'all')">
+                📍 TP. Hưng Yên
               </button>
               <button class="tag-btn tag-reset" onclick="resetFilters()">
-                <i class="fa-solid fa-rotate-left"></i> Xóa bộ lọc
+                <i class="fa-solid fa-rotate-left"></i> Xóa lọc
               </button>
             </div>
           </div>

@@ -104,8 +104,8 @@ db.serialize(() => {
       db.run(
         `INSERT INTO users (name, email, password, phone, avatar, role) VALUES (?, ?, ?, ?, ?, ?)`,
         [
-          'Quản Trị Viên (Admin)',
-          'admin@batdongsan.vn',
+          'Quản Trị Viên (BĐS Hưng Yên)',
+          'admin@bdshungyen.vn',
           adminPassword,
           '0905123456',
           'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
@@ -130,175 +130,173 @@ db.serialize(() => {
               if (err) return console.error('Error seeding user:', err);
               const userId = this.lastID;
 
-              // Insert Properties
+              // Insert Hưng Yên Properties
               const sampleProperties = [
                 {
                   user_id: userId,
-                  title: 'Căn hộ cao cấp Ocean View Sơn Trà Đà Nẵng',
-                  description: 'Căn hộ view biển Sơn Trà cực đẹp, full nội thất cao cấp nhập khẩu, 2 phòng ngủ, 2 WC. Tiện ích hồ bơi vô cực, gym, an ninh 24/7.',
+                  title: 'Căn hộ cao cấp Ecopark Swanlake Onsen Văn Giang Hưng Yên',
+                  description: 'Căn hộ khoáng nóng chuẩn Nhật Bản tại KĐT Ecopark Văn Giang, Hưng Yên. View trọn hồ Swan Lake 50ha, 2 phòng ngủ 2 WC, bàn giao full nội thất cao cấp. Tiện ích suối khoáng nóng khoáng bùn, bể bơi vô cực, công viên khoáng nóng.',
                   type: 'căn hộ',
-                  price: 2200000000, // 2.2 tỷ
-                  area: 65,
-                  city: 'Đà Nẵng',
-                  district: 'Quận Sơn Trà',
-                  address: '120 Võ Nguyên Giáp, Phước Mỹ, Sơn Trà, Đà Nẵng',
+                  price: 2850000000, // 2.85 tỷ
+                  area: 68,
+                  city: 'Hưng Yên',
+                  district: 'Văn Giang',
+                  address: 'KĐT Ecopark, Xã Phụng Công, Văn Giang, Hưng Yên',
                   phone: '0914888999',
                   images: JSON.stringify([
                     'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1000&q=80',
-                    'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80',
-                    'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=80'
+                    'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80'
                   ]),
-                  lat: 16.064,
-                  lng: 108.246,
+                  lat: 20.963,
+                  lng: 105.932,
                   status: 'approved'
                 },
                 {
                   user_id: userId,
-                  title: 'Căn hộ chung cư HAGL Lakeview Thanh Khê',
-                  description: 'Căn hộ góc 3 phòng ngủ thoáng mát, view hồ Hàm Nghi. Sổ hồng chính chủ, giao nhà ngay.',
-                  type: 'căn hộ',
-                  price: 1850000000, // 1.85 tỷ
-                  area: 85,
-                  city: 'Đà Nẵng',
-                  district: 'Quận Thanh Khê',
-                  address: '72 Hàm Nghi, Thạc Gián, Thanh Khê, Đà Nẵng',
-                  phone: '0914888999',
-                  images: JSON.stringify([
-                    'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1000&q=80',
-                    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=80'
-                  ]),
-                  lat: 16.061,
-                  lng: 108.209,
-                  status: 'approved'
-                },
-                {
-                  user_id: adminId,
-                  title: 'Biệt thự sinh thái mặt sông Hòa Xuân Đà Nẵng',
-                  description: 'Biệt thự thiết kế hiện đại 3 tầng, sân vườn rộng rãi, hồ bơi riêng. Vị trí góc 2 mặt tiền sông cực kỳ thoáng mát và riêng tư.',
+                  title: 'Biệt thự Vinhomes Ocean Park 2 San Hoạn Văn Giang Hưng Yên',
+                  description: 'Biệt thự đơn lập phân khu San Hoạn vị trí đắc địa gần công viên nước Royal Wave Park. Diện tích 160m2, xây 4 tầng tân cổ điển sang trọng, sổ đỏ lâu dài chính chủ.',
                   type: 'biệt thự',
-                  price: 8500000000, // 8.5 tỷ
-                  area: 320,
-                  city: 'Đà Nẵng',
-                  district: 'Quận Cẩm Lệ',
-                  address: 'KĐT Sinh Thái Hòa Xuân, Cẩm Lệ, Đà Nẵng',
-                  phone: '0905123456',
+                  price: 11500000000, // 11.5 tỷ
+                  area: 160,
+                  city: 'Hưng Yên',
+                  district: 'Văn Giang',
+                  address: 'KĐT Vinhomes Ocean Park 2, Nghĩa Trụ, Văn Giang, Hưng Yên',
+                  phone: '0914888999',
                   images: JSON.stringify([
                     'https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=1000&q=80',
                     'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=80'
                   ]),
-                  lat: 16.02,
-                  lng: 108.218,
-                  status: 'approved'
-                },
-                {
-                  user_id: userId,
-                  title: 'Đất nền ven biển KĐT Nam Hòa Xuân Ngũ Hành Sơn',
-                  description: 'Lô đất đẹp diện tích 100m2 (5x20m), đường 7.5m lề 4m, hướng Đông Nam mát mẻ. Pháp lý đầy đủ sổ đỏ sang tên ngay.',
-                  type: 'đất nền',
-                  price: 2950000000, // 2.95 tỷ
-                  area: 100,
-                  city: 'Đà Nẵng',
-                  district: 'Quận Ngũ Hành Sơn',
-                  address: 'Block B2.15, KĐT Nam Hòa Xuân, Ngũ Hành Sơn, Đà Nẵng',
-                  phone: '0914888999',
-                  images: JSON.stringify([
-                    'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=80'
-                  ]),
-                  lat: 16.01,
-                  lng: 108.235,
+                  lat: 20.947,
+                  lng: 105.981,
                   status: 'approved'
                 },
                 {
                   user_id: adminId,
-                  title: 'Mặt bằng kinh doanh mặt tiền Lê Duẩn Đà Nẵng',
-                  description: 'Mặt bằng kinh doanh tuyến phố thời trang sầm uất nhất Đà Nẵng. Diện tích 90m2 sàn, mặt tiền 6m. Tiện làm showroom, spa, boutique.',
-                  type: 'mặt bằng kinh doanh',
-                  price: 3500000000, // 3.5 tỷ
+                  title: 'Đất nền thổ cư đấu giá mặt đường Như Quỳnh Văn Lâm Hưng Yên',
+                  description: 'Lô đất đấu giá đẹp vuông vắn diện tích 90m2 (5x18m), đường rộng 12m vỉa hè 3m. Nằm kế bên tuyến QL5A kết nối Hà Nội - Hưng Yên. Tiện ở hoặc làm kho xưởng, gara ô tô.',
+                  type: 'đất nền',
+                  price: 3200000000, // 3.2 tỷ
                   area: 90,
-                  city: 'Đà Nẵng',
-                  district: 'Quận Hải Châu',
-                  address: '245 Lê Duẩn, Tân Chính, Hải Châu, Đà Nẵng',
+                  city: 'Hưng Yên',
+                  district: 'Văn Lâm',
+                  address: 'Thị trấn Như Quỳnh, Văn Lâm, Hưng Yên',
+                  phone: '0905123456',
+                  images: JSON.stringify([
+                    'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=80'
+                  ]),
+                  lat: 20.985,
+                  lng: 106.012,
+                  status: 'approved'
+                },
+                {
+                  user_id: adminId,
+                  title: 'Shophouse mặt bằng kinh doanh phố Bần Thị xã Mỹ Hào Hưng Yên',
+                  description: 'Nhà phố shophouse kinh doanh sầm uất mặt đường Nguyễn Văn Linh, Phường Nhân Hòa, Thị xã Mỹ Hào. Diện tích 85m2 sàn đúc 4.5 tầng, kinh doanh mọi ngành nghề.',
+                  type: 'mặt bằng kinh doanh',
+                  price: 4500000000, // 4.5 tỷ
+                  area: 85,
+                  city: 'Hưng Yên',
+                  district: 'Mỹ Hào',
+                  address: 'Đường Nguyễn Văn Linh, Phường Nhân Hòa, Thị xã Mỹ Hào, Hưng Yên',
                   phone: '0905123456',
                   images: JSON.stringify([
                     'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1000&q=80',
                     'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1000&q=80'
                   ]),
-                  lat: 16.068,
-                  lng: 108.214,
+                  lat: 20.938,
+                  lng: 106.095,
                   status: 'approved'
                 },
                 {
                   user_id: userId,
-                  title: 'Nhà phố hiện đại trung tâm Quận Hải Châu Đà Nẵng',
-                  description: 'Nhà 3 tầng đúc kiên cố, 4 phòng ngủ, phòng thờ, sân phơi, garage ô tô. Vị trí kiệt ô tô né nhau đường Nguyễn Chí Thanh.',
+                  title: 'Nhà phố 3 tầng trung tâm Phường Hiến Nam TP. Hưng Yên',
+                  description: 'Nhà xây kiên cố 3 tầng, 3 phòng ngủ, phòng khách, phòng thờ. Ô tô ngủ trong nhà. Gần Phố Hiến cổ kính, UBND Tỉnh, trường chuyên Hưng Yên.',
                   type: 'nhà ở',
-                  price: 4600000000, // 4.6 tỷ
+                  price: 2450000000, // 2.45 tỷ
                   area: 75,
-                  city: 'Đà Nẵng',
-                  district: 'Quận Hải Châu',
-                  address: '158/24 Nguyễn Chí Thanh, Hải Châu, Đà Nẵng',
+                  city: 'Hưng Yên',
+                  district: 'TP. Hưng Yên',
+                  address: 'Phường Hiến Nam, Thành phố Hưng Yên, Tỉnh Hưng Yên',
                   phone: '0914888999',
                   images: JSON.stringify([
                     'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1000&q=80',
                     'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80'
                   ]),
-                  lat: 16.066,
-                  lng: 108.221,
+                  lat: 20.651,
+                  lng: 106.052,
                   status: 'approved'
                 },
                 {
                   user_id: userId,
-                  title: 'Căn hộ Studio Vinhomes Central Park Bình Thạnh',
-                  description: 'Căn hộ chung cư cao cấp tầng đẹp view công viên Landmark 81. Đầy đủ tiện ích đẳng cấp quốc tế.',
+                  title: 'Căn hộ Haven Park Ecopark Văn Giang Hưng Yên',
+                  description: 'Căn hộ công viên trong đại ngàn xanh Ecopark Hưng Yên. Tầng trung thoáng mát view biệt thự đảo Grand Island. Pháp lý đầy đủ sổ hồng sang tên ngay.',
                   type: 'căn hộ',
-                  price: 3400000000, // 3.4 tỷ
-                  area: 55,
-                  city: 'TP. Hồ Chí Minh',
-                  district: 'Quận Bình Thạnh',
-                  address: '208 Nguyễn Hữu Cảnh, Phường 22, Bình Thạnh, TP. Hồ Chí Minh',
+                  price: 1950000000, // 1.95 tỷ
+                  area: 58,
+                  city: 'Hưng Yên',
+                  district: 'Văn Giang',
+                  address: 'KĐT Ecopark, Phụng Công, Văn Giang, Hưng Yên',
                   phone: '0914888999',
                   images: JSON.stringify([
-                    'https://images.unsplash.com/photo-1567496898669-ee935f5f647a?auto=format&fit=crop&w=1000&q=80'
+                    'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1000&q=80'
                   ]),
-                  lat: 10.793,
-                  lng: 106.721,
+                  lat: 20.960,
+                  lng: 105.930,
                   status: 'approved'
                 },
                 {
                   user_id: adminId,
-                  title: 'Căn hộ Penthouse Landmark 72 Cầu Giấy Hà Nội',
-                  description: 'Siêu căn hộ Penthouse sang trọng hàng đầu Hà Nội. View tầm nhìn 360 độ toàn thành phố.',
-                  type: 'căn hộ',
-                  price: 15000000000, // 15 tỷ
-                  area: 280,
-                  city: 'Hà Nội',
-                  district: 'Quận Cầu Giấy',
-                  address: 'Keangnam Landmark 72, Phạm Hùng, Cầu Giấy, Hà Nội',
+                  title: 'Đất quy hoạch kho xưởng KCN Thăng Long II Yên Mỹ Hưng Yên',
+                  description: 'Lô đất sào quy hoạch đất sản xuất kinh doanh phi nông nghiệp gần KCN Thăng Long II Yên Mỹ. Mặt đường xe container 40 feet vào tận nơi.',
+                  type: 'đất nền',
+                  price: 6800000000, // 6.8 tỷ
+                  area: 450,
+                  city: 'Hưng Yên',
+                  district: 'Yên Mỹ',
+                  address: 'Xã Tân Lập, Huyện Yên Mỹ, Hưng Yên',
                   phone: '0905123456',
                   images: JSON.stringify([
-                    'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&w=1000&q=80'
+                    'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=80'
                   ]),
-                  lat: 21.017,
-                  lng: 105.784,
+                  lat: 20.902,
+                  lng: 106.015,
                   status: 'approved'
                 },
                 {
                   user_id: userId,
-                  title: 'Căn hộ chung cư mini Sơn Trà giá rẻ gần đại học',
-                  description: 'Căn hộ mới xây 1 phòng ngủ, bàn giao quý III. Thích hợp cho gia đình trẻ hoặc đầu tư cho thuê.',
-                  type: 'căn hộ',
-                  price: 1250000000, // 1.25 tỷ
-                  area: 52,
-                  city: 'Đà Nẵng',
-                  district: 'Quận Sơn Trà',
-                  address: '45 Trần Hưng Đạo, Sơn Trà, Đà Nẵng',
+                  title: 'Nhà vườn sinh thái ven sông Hồng Khoái Châu Hưng Yên',
+                  description: 'Khu nhà vườn rộng 280m2 có cây ăn quả, ao cá nhỏ, biệt thự sân vườn thoáng mát. Rất hợp nghỉ dưỡng cuối tuần gần làng cổ Đông Tảo.',
+                  type: 'biệt thự',
+                  price: 3800000000, // 3.8 tỷ
+                  area: 280,
+                  city: 'Hưng Yên',
+                  district: 'Khoái Châu',
+                  address: 'Xã Bình Minh, Huyện Khoái Châu, Hưng Yên',
                   phone: '0914888999',
                   images: JSON.stringify([
-                    'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&fit=crop&w=1000&q=80'
+                    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=80'
                   ]),
-                  lat: 16.071,
-                  lng: 108.231,
-                  status: 'pending' // Chờ duyệt để admin thử nghiệm duyệt bài!
+                  lat: 20.831,
+                  lng: 105.945,
+                  status: 'approved'
+                },
+                {
+                  user_id: userId,
+                  title: 'Lô đất nền góc đấu giá thị trấn Vương Tiên Lữ Hưng Yên',
+                  description: 'Đất đấu giá khu dân cư mới thị trấn Vương Huyện Tiên Lữ. Lô góc 2 mặt tiền rộng rãi 95m2, sổ đỏ vuông vắn sang tên liền.',
+                  type: 'đất nền',
+                  price: 1350000000, // 1.35 tỷ
+                  area: 95,
+                  city: 'Hưng Yên',
+                  district: 'Tiên Lữ',
+                  address: 'Thị trấn Vương, Huyện Tiên Lữ, Hưng Yên',
+                  phone: '0914888999',
+                  images: JSON.stringify([
+                    'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=80'
+                  ]),
+                  lat: 20.655,
+                  lng: 106.142,
+                  status: 'pending'
                 }
               ];
 

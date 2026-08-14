@@ -1615,6 +1615,50 @@ button, input, select, textarea {
     padding-bottom: 68px;
   }
 
+  .navbar {
+    height: 56px;
+    padding: 0;
+  }
+
+  .nav-wrapper {
+    padding: 0 12px;
+  }
+
+  .brand-logo {
+    font-size: 1.15rem;
+    gap: 6px;
+  }
+
+  .brand-logo i {
+    font-size: 1.25rem;
+  }
+
+  .user-name {
+    display: none !important;
+  }
+
+  .avatar-wrapper {
+    padding: 4px 6px;
+    gap: 4px;
+    background: transparent;
+    border: none;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .auth-buttons {
+    gap: 6px;
+  }
+
+  .auth-buttons .btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    border-radius: 20px;
+  }
+
   .mobile-bottom-nav {
     display: flex;
   }
