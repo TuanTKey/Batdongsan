@@ -76,9 +76,39 @@
             <a href="#" class="text-danger" onclick="logout(); return false;"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
           </div>
         </div>
+
+        <button class="mobile-toggle-btn" id="mobile-toggle-btn" onclick="toggleMobileNav()">
+          <i class="fa-solid fa-bars"></i>
+        </button>
       </div>
     </div>
   </header>
+
+  <!-- Mobile Bottom Navigation Bar (App Experience) -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <a href="#" class="mob-nav-item active" id="mob-nav-catalog" onclick="switchView('catalog'); return false;">
+      <i class="fa-solid fa-compass"></i>
+      <span>Khám phá</span>
+    </a>
+    <a href="#" class="mob-nav-item" id="mob-nav-favorites" onclick="switchView('favorites'); return false;">
+      <i class="fa-solid fa-heart"></i>
+      <span>Yêu thích</span>
+      <span class="mob-badge" id="mob-fav-badge" style="display: none;">0</span>
+    </a>
+    <a href="#" class="mob-nav-item" id="mob-nav-post" onclick="openPostModal(); return false;">
+      <div class="mob-post-icon"><i class="fa-solid fa-plus"></i></div>
+      <span>Đăng tin</span>
+    </a>
+    <a href="#" class="mob-nav-item" id="mob-nav-chat" onclick="openChatModal(); return false;">
+      <i class="fa-solid fa-comments"></i>
+      <span>Tin nhắn</span>
+      <span class="mob-badge" id="mob-chat-badge" style="display: none;">0</span>
+    </a>
+    <a href="#" class="mob-nav-item" id="mob-nav-user" onclick="handleMobileUserClick(); return false;">
+      <i class="fa-solid fa-user"></i>
+      <span id="mob-user-label">Tài khoản</span>
+    </a>
+  </nav>
 
   <!-- MAIN CONTENT CONTAINER -->
   <main class="main-content">
@@ -615,6 +645,7 @@
         <div class="chat-main">
           <!-- Chat Header -->
           <div class="chat-header" id="chat-header" style="display: none;">
+            <button class="chat-back-btn" onclick="showChatThreadsOnMobile()"><i class="fa-solid fa-arrow-left"></i></button>
             <img id="chat-partner-avatar" src="" class="chat-partner-avatar">
             <div class="chat-header-info">
               <h4 id="chat-partner-name">Tên người dùng</h4>

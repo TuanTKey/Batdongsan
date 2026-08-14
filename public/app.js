@@ -173,12 +173,16 @@ function handleLogoClick() {
 function switchView(viewName) {
   document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.mob-nav-item').forEach(el => el.classList.remove('active'));
 
   const targetView = document.getElementById(`view-${viewName}`);
   if (targetView) targetView.classList.add('active');
 
   const navItem = document.getElementById(`nav-${viewName}`);
   if (navItem) navItem.classList.add('active');
+
+  const mobNavItem = document.getElementById(`mob-nav-${viewName}`);
+  if (mobNavItem) mobNavItem.classList.add('active');
 
   if (viewName === 'catalog') {
     loadProperties();
@@ -485,16 +489,28 @@ async function toggleCurrentDetailFavorite() {
 }
 
 async function updateFavoritesCount() {
+  const badge = document.getElementById('fav-count');
+  const mobBadge = document.getElementById('mob-fav-badge');
   if (!currentUser) {
-    document.getElementById('fav-count').textContent = '0';
+    if (badge) badge.textContent = '0';
+    if (mobBadge) mobBadge.style.display = 'none';
     return;
   }
   try {
     const list = await fetchAPI('/favorites');
     favoritesList = list;
-    document.getElementById('fav-count').textContent = list.length;
+    if (badge) badge.textContent = list.length;
+    if (mobBadge) {
+      if (list.length > 0) {
+        mobBadge.textContent = list.length;
+        mobBadge.style.display = 'inline-block';
+      } else {
+        mobBadge.style.display = 'none';
+      }
+    }
   } catch (e) {
-    document.getElementById('fav-count').textContent = '0';
+    if (badge) badge.textContent = '0';
+    if (mobBadge) mobBadge.style.display = 'none';
   }
 }
 
@@ -932,20 +948,29 @@ let activeConversationId = null;
 let chatPollInterval = null;
 
 async function updateChatUnreadBadge() {
+  const badge = document.getElementById('chat-unread-badge');
+  const mobBadge = document.getElementById('mob-chat-badge');
   if (!currentUser) {
-    const badge = document.getElementById('chat-unread-badge');
     if (badge) badge.style.display = 'none';
+    if (mobBadge) mobBadge.style.display = 'none';
     return;
   }
   try {
     const data = await fetchAPI('/chat/unread-count');
-    const badge = document.getElementById('chat-unread-badge');
     if (badge) {
       if (data.unread_total > 0) {
         badge.textContent = data.unread_total;
         badge.style.display = 'inline-block';
       } else {
         badge.style.display = 'none';
+      }
+    }
+    if (mobBadge) {
+      if (data.unread_total > 0) {
+        mobBadge.textContent = data.unread_total;
+        mobBadge.style.display = 'inline-block';
+      } else {
+        mobBadge.style.display = 'none';
       }
     }
   } catch (e) {}
@@ -1058,7 +1083,28 @@ async function selectChatThread(convId) {
   activeConversationId = convId;
   document.querySelectorAll('.chat-thread-item').forEach(el => el.classList.remove('active'));
   await fetchConversationMessages(convId);
+  showChatMainOnMobile();
   updateChatUnreadBadge();
+}
+
+function showChatMainOnMobile() {
+  document.querySelector('.chat-main')?.classList.add('mobile-active');
+}
+
+function showChatThreadsOnMobile() {
+  document.querySelector('.chat-main')?.classList.remove('mobile-active');
+}
+
+function handleMobileUserClick() {
+  if (!currentUser) {
+    openModal('login-modal');
+  } else {
+    if (currentUser.role === 'admin') {
+      switchView('admin');
+    } else {
+      openModal('profile-modal');
+    }
+  }
 }
 
 async function fetchConversationMessages(convId, silent = false) {
