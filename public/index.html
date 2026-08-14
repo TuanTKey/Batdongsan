@@ -441,28 +441,29 @@
         <input type="hidden" id="post-id">
         
         <div class="form-group">
-          <label>Tiêu đề bài đăng *</label>
-          <input type="text" id="post-title" required placeholder="VD: Căn hộ cao cấp 2PN view biển Sơn Trà Đà Nẵng">
+          <label>Tiêu đề tin đăng *</label>
+          <input type="text" id="post-title" required placeholder="VD: Đất nền thổ cư đấu giá thị trấn Như Quỳnh Văn Lâm Hưng Yên">
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label>Loại bất động sản *</label>
             <select id="post-type" required>
-              <option value="căn hộ">Căn hộ</option>
-              <option value="nhà ở">Nhà ở</option>
-              <option value="đất nền">Đất nền</option>
-              <option value="biệt thự">Biệt thự</option>
-              <option value="mặt bằng kinh doanh">Mặt bằng kinh doanh</option>
+              <option value="đất nền">Đất nền dự án / thổ cư</option>
+              <option value="căn hộ">Căn hộ chung cư (Ecopark, Ocean Park...)</option>
+              <option value="nhà ở">Nhà ở thổ cư / Nhà phố</option>
+              <option value="biệt thự">Biệt thự / Nhà vườn</option>
+              <option value="mặt bằng kinh doanh">Mặt bằng / Shophouse / Kho xưởng KCN</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label>Thành phố / Tỉnh *</label>
+            <label>Tỉnh / Thành phố *</label>
             <select id="post-city" required>
-              <option value="Đà Nẵng">Đà Nẵng</option>
-              <option value="Hà Nội">Hà Nội</option>
-              <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
+              <option value="Hưng Yên">Tỉnh Hưng Yên</option>
+              <option value="Hà Nội">Hà Nội (Khu vực lân cận)</option>
+              <option value="Bắc Ninh">Bắc Ninh (Khu vực lân cận)</option>
+              <option value="Hà Nam">Hà Nam (Khu vực lân cận)</option>
             </select>
           </div>
         </div>
@@ -470,20 +471,32 @@
         <div class="form-row">
           <div class="form-group">
             <label>Giá bán (VNĐ) *</label>
-            <input type="number" id="post-price" required placeholder="VD: 2200000000 (2.2 tỷ)" step="1000000">
+            <input type="number" id="post-price" required placeholder="VD: 2850000000 (2.85 tỷ)" step="1000000">
             <small id="price-hint" class="text-muted">Nhập giá chính xác bằng đồng VNĐ</small>
           </div>
 
           <div class="form-group">
             <label>Diện tích (m²) *</label>
-            <input type="number" id="post-area" required placeholder="VD: 65" step="0.1">
+            <input type="number" id="post-area" required placeholder="VD: 90" step="0.1">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>Quận / Huyện</label>
-            <input type="text" id="post-district" placeholder="VD: Quận Sơn Trà">
+            <label>Huyện / Thị xã / TP *</label>
+            <select id="post-district" required>
+              <option value="Văn Giang">Huyện Văn Giang (Ecopark, Ocean Park 2-3)</option>
+              <option value="Mỹ Hào">Thị xã Mỹ Hào (Phố Bần, Nhân Hòa)</option>
+              <option value="TP. Hưng Yên">Thành phố Hưng Yên (Hiến Nam, Phố Hiến)</option>
+              <option value="Văn Lâm">Huyện Văn Lâm (Như Quỳnh)</option>
+              <option value="Yên Mỹ">Huyện Yên Mỹ</option>
+              <option value="Khoái Châu">Huyện Khoái Châu</option>
+              <option value="Tiên Lữ">Huyện Tiên Lữ</option>
+              <option value="Kim Động">Huyện Kim Động</option>
+              <option value="Phù Cừ">Huyện Phù Cừ</option>
+              <option value="Ân Thi">Huyện Ân Thi</option>
+              <option value="Khác">Khu vực lân cận khác</option>
+            </select>
           </div>
 
           <div class="form-group">
@@ -494,7 +507,7 @@
 
         <div class="form-group">
           <label>Địa chỉ chi tiết *</label>
-          <input type="text" id="post-address" required placeholder="VD: 120 Võ Nguyên Giáp, Phước Mỹ, Sơn Trà, Đà Nẵng">
+          <input type="text" id="post-address" required placeholder="VD: Thị trấn Như Quỳnh, Huyện Văn Lâm, Tỉnh Hưng Yên">
         </div>
 
         <div class="form-group">
