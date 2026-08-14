@@ -89,7 +89,7 @@ db.serialize(() => {
     )
   `);
 
-  // Always ensure Admin Accounts exist with password 'admin123'
+  // Ensure Admin Account admin@bdshungyen.vn exists with password 'admin123' and remove legacy admin
   (async () => {
     const adminPassword = await bcrypt.hash('admin123', 10);
     
@@ -112,24 +112,8 @@ db.serialize(() => {
       }
     });
 
-    // Ensure legacy admin@batdongsan.vn works as well
-    db.get('SELECT id FROM users WHERE email = ?', ['admin@batdongsan.vn'], (err, row) => {
-      if (!row) {
-        db.run(
-          `INSERT INTO users (name, email, password, phone, avatar, role) VALUES (?, ?, ?, ?, ?, ?)`,
-          [
-            'Quản Trị Viên (BĐS Hưng Yên)',
-            'admin@batdongsan.vn',
-            adminPassword,
-            '0905123456',
-            'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-            'admin'
-          ]
-        );
-      } else {
-        db.run('UPDATE users SET password = ?, role = ? WHERE email = ?', [adminPassword, 'admin', 'admin@batdongsan.vn']);
-      }
-    });
+    // Delete old legacy admin account if present
+    db.run("DELETE FROM users WHERE email = 'admin@batdongsan.vn'");
   })();
 
   // Seed Data
