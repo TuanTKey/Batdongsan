@@ -815,7 +815,14 @@ app.post('/api/chat/conversations/:id/messages', authenticateToken, (req, res) =
 });
 
 // Serve frontend SPA fallback for index
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.get('*', (req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ error: 'API endpoint không tồn tại' });
+  }
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
