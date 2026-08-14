@@ -129,7 +129,7 @@ function updateAuthUI(user) {
       if (navFavorites) navFavorites.style.display = 'flex';
       if (navChat) navChat.style.display = 'flex';
       if (navMyProps) navMyProps.style.display = 'none';
-      if (btnPost) btnPost.style.display = 'inline-flex';
+      if (btnPost) btnPost.style.display = 'none';
       if (navAdmin) navAdmin.style.display = 'flex';
       if (dropdownMyPropsLink) dropdownMyPropsLink.style.display = 'none';
       if (dropdownAdminLink) dropdownAdminLink.style.display = 'flex';
