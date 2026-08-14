@@ -89,6 +89,49 @@ db.serialize(() => {
     )
   `);
 
+  // Always ensure Admin Accounts exist with password 'admin123'
+  (async () => {
+    const adminPassword = await bcrypt.hash('admin123', 10);
+    
+    // Ensure admin@bdshungyen.vn
+    db.get('SELECT id FROM users WHERE email = ?', ['admin@bdshungyen.vn'], (err, row) => {
+      if (!row) {
+        db.run(
+          `INSERT INTO users (name, email, password, phone, avatar, role) VALUES (?, ?, ?, ?, ?, ?)`,
+          [
+            'Quản Trị Viên (BĐS Hưng Yên)',
+            'admin@bdshungyen.vn',
+            adminPassword,
+            '0905123456',
+            'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+            'admin'
+          ]
+        );
+      } else {
+        db.run('UPDATE users SET password = ?, role = ? WHERE email = ?', [adminPassword, 'admin', 'admin@bdshungyen.vn']);
+      }
+    });
+
+    // Ensure legacy admin@batdongsan.vn works as well
+    db.get('SELECT id FROM users WHERE email = ?', ['admin@batdongsan.vn'], (err, row) => {
+      if (!row) {
+        db.run(
+          `INSERT INTO users (name, email, password, phone, avatar, role) VALUES (?, ?, ?, ?, ?, ?)`,
+          [
+            'Quản Trị Viên (BĐS Hưng Yên)',
+            'admin@batdongsan.vn',
+            adminPassword,
+            '0905123456',
+            'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+            'admin'
+          ]
+        );
+      } else {
+        db.run('UPDATE users SET password = ?, role = ? WHERE email = ?', [adminPassword, 'admin', 'admin@batdongsan.vn']);
+      }
+    });
+  })();
+
   // Seed Data
   db.get('SELECT COUNT(*) as count FROM users', async (err, row) => {
     if (err) {
