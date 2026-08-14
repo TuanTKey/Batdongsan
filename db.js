@@ -141,11 +141,17 @@ if (isPostgres) {
       // Delete old legacy admin if present
       await pool.query("DELETE FROM users WHERE email = 'admin@batdongsan.vn'");
 
-      // Seed Properties ONLY ONCE using system_settings flag
-      const checkSeeded = await pool.query("SELECT val FROM system_settings WHERE key = 'properties_seeded'");
-      if (checkSeeded.rows.length === 0) {
-        const adminRes = await pool.query('SELECT id FROM users WHERE email = $1', ['admin@bdshungyen.vn']);
+      // Repair orphan properties to point to valid Admin ID
+      const adminRes = await pool.query('SELECT id FROM users WHERE email = $1', ['admin@bdshungyen.vn']);
+      if (adminRes.rows.length > 0) {
         const adminId = adminRes.rows[0].id;
+        await pool.query('UPDATE properties SET user_id = $1 WHERE user_id NOT IN (SELECT id FROM users)', [adminId]);
+      }
+
+      // Seed Properties if empty
+      const checkProps = await pool.query('SELECT COUNT(*) FROM properties');
+      if (parseInt(checkProps.rows[0].count, 10) === 0) {
+        const adminId = adminRes.rows[0] ? adminRes.rows[0].id : 1;
 
         const checkUser = await pool.query('SELECT id FROM users WHERE email = $1', ['nguyenvana@gmail.com']);
         let userId;

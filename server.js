@@ -225,9 +225,12 @@ app.get('/api/properties', optionalAuth, (req, res) => {
   const { keyword, city, type, min_price, max_price, min_area, max_area, status } = req.query;
 
   let sql = `
-    SELECT p.*, u.name as seller_name, u.email as seller_email, u.avatar as seller_avatar
+    SELECT p.*, 
+           COALESCE(u.name, 'Hoàng Thị Nhung (BĐS Hưng Yên)') as seller_name, 
+           COALESCE(u.email, 'admin@bdshungyen.vn') as seller_email, 
+           COALESCE(u.avatar, 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2') as seller_avatar
     FROM properties p
-    JOIN users u ON p.user_id = u.id
+    LEFT JOIN users u ON p.user_id = u.id
     WHERE 1=1
   `;
   const params = [];
@@ -337,9 +340,13 @@ app.get('/api/my-properties', authenticateToken, (req, res) => {
 app.get('/api/properties/:id', optionalAuth, (req, res) => {
   const id = req.params.id;
   const sql = `
-    SELECT p.*, u.name as seller_name, u.email as seller_email, u.phone as seller_phone_default, u.avatar as seller_avatar
+    SELECT p.*, 
+           COALESCE(u.name, 'Hoàng Thị Nhung (BĐS Hưng Yên)') as seller_name, 
+           COALESCE(u.email, 'admin@bdshungyen.vn') as seller_email, 
+           COALESCE(u.phone, p.phone) as seller_phone_default, 
+           COALESCE(u.avatar, 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2') as seller_avatar
     FROM properties p
-    JOIN users u ON p.user_id = u.id
+    LEFT JOIN users u ON p.user_id = u.id
     WHERE p.id = ?
   `;
   db.get(sql, [id], (err, property) => {
@@ -474,10 +481,12 @@ app.delete('/api/properties/:id', authenticateToken, (req, res) => {
 // Get list of saved favorites
 app.get('/api/favorites', authenticateToken, (req, res) => {
   const sql = `
-    SELECT p.*, u.name as seller_name, u.avatar as seller_avatar
+    SELECT p.*, 
+           COALESCE(u.name, 'Hoàng Thị Nhung (BĐS Hưng Yên)') as seller_name, 
+           COALESCE(u.avatar, 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2') as seller_avatar
     FROM favorites f
     JOIN properties p ON f.property_id = p.id
-    JOIN users u ON p.user_id = u.id
+    LEFT JOIN users u ON p.user_id = u.id
     WHERE f.user_id = ?
     ORDER BY f.id DESC
   `;
@@ -537,17 +546,17 @@ app.delete('/api/favorites/:id', authenticateToken, (req, res) => {
 app.get('/api/admin/stats', authenticateToken, requireAdmin, (req, res) => {
   const stats = {};
 
-  db.get('SELECT COUNT(*) as total_users FROM users', (err1, row1) => {
-    stats.total_users = row1 ? row1.total_users : 0;
+  db.get('SELECT COUNT(*) as total FROM users', (err1, row1) => {
+    stats.total_users = row1 ? parseInt(Object.values(row1)[0] || 0, 10) : 0;
     
-    db.get('SELECT COUNT(*) as total_properties FROM properties', (err2, row2) => {
-      stats.total_properties = row2 ? row2.total_properties : 0;
+    db.get('SELECT COUNT(*) as total FROM properties', (err2, row2) => {
+      stats.total_properties = row2 ? parseInt(Object.values(row2)[0] || 0, 10) : 0;
 
-      db.get("SELECT COUNT(*) as pending_properties FROM properties WHERE status = 'pending'", (err3, row3) => {
-        stats.pending_properties = row3 ? row3.pending_properties : 0;
+      db.get("SELECT COUNT(*) as total FROM properties WHERE status = 'pending'", (err3, row3) => {
+        stats.pending_properties = row3 ? parseInt(Object.values(row3)[0] || 0, 10) : 0;
 
-        db.get("SELECT COUNT(*) as approved_properties FROM properties WHERE status = 'approved'", (err4, row4) => {
-          stats.approved_properties = row4 ? row4.approved_properties : 0;
+        db.get("SELECT COUNT(*) as total FROM properties WHERE status = 'approved'", (err4, row4) => {
+          stats.approved_properties = row4 ? parseInt(Object.values(row4)[0] || 0, 10) : 0;
           res.json(stats);
         });
       });
@@ -594,17 +603,19 @@ app.delete('/api/admin/users/:id', authenticateToken, requireAdmin, (req, res) =
 // Get All Properties for Admin Moderation
 app.get('/api/admin/properties', authenticateToken, requireAdmin, (req, res) => {
   const sql = `
-    SELECT p.*, u.name as seller_name, u.email as seller_email
+    SELECT p.*, 
+           COALESCE(u.name, 'Hoàng Thị Nhung (BĐS Hưng Yên)') as seller_name, 
+           COALESCE(u.email, 'admin@bdshungyen.vn') as seller_email
     FROM properties p
-    JOIN users u ON p.user_id = u.id
-    ORDER BY CASE WHEN p.status = 'pending' THEN 0 ELSE 1 END, p.id DESC
+    LEFT JOIN users u ON p.user_id = u.id
+    ORDER BY p.id DESC
   `;
 
   db.all(sql, (err, rows) => {
     if (err) return res.status(500).json({ error: 'Lỗi tải danh sách quản trị' });
-    const properties = rows.map((item) => {
+    const properties = (rows || []).map((item) => {
       try {
-        item.images = JSON.parse(item.images);
+        item.images = typeof item.images === 'string' ? JSON.parse(item.images) : item.images;
       } catch (e) {
         item.images = [item.images];
       }
