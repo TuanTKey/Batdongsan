@@ -643,8 +643,18 @@
           <input type="tel" id="prof-phone" required>
         </div>
         <div class="form-group">
-          <label>Link Avatar</label>
-          <input type="url" id="prof-avatar">
+          <label><i class="fa-solid fa-camera text-primary"></i> Ảnh đại diện (Tải lên từ thiết bị)</label>
+          <div style="display: flex; align-items: center; gap: 16px; margin-top: 8px;">
+            <img id="prof-avatar-preview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); box-shadow: var(--shadow-sm);">
+            <div>
+              <button type="button" class="btn btn-outline" onclick="document.getElementById('prof-avatar-file').click()" style="padding: 8px 16px; font-size: 0.85rem; font-weight: 600;">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Chọn ảnh từ thiết bị
+              </button>
+              <input type="file" id="prof-avatar-file" accept="image/*" style="display: none;" onchange="handleAvatarFileSelect(event)">
+              <p class="text-muted" style="font-size: 0.78rem; margin-top: 4px;">Hỗ trợ JPG, PNG, WEBP</p>
+            </div>
+          </div>
+          <input type="hidden" id="prof-avatar">
         </div>
         <div class="form-group">
           <label>Mật khẩu mới (Bỏ trống nếu không muốn đổi)</label>

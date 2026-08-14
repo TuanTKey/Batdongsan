@@ -969,16 +969,54 @@ async function handleForgotPassword(e) {
   }
 }
 
+let selectedAvatarFile = null;
+
+function handleAvatarFileSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  selectedAvatarFile = file;
+  const previewImg = document.getElementById('prof-avatar-preview');
+  if (previewImg) {
+    previewImg.src = URL.createObjectURL(file);
+  }
+}
+
 async function handleProfileUpdate(e) {
   e.preventDefault();
-  const payload = {
-    name: document.getElementById('prof-name').value.trim(),
-    phone: document.getElementById('prof-phone').value.trim(),
-    avatar: document.getElementById('prof-avatar').value.trim(),
-    password: document.getElementById('prof-password').value
-  };
+  let avatarUrl = document.getElementById('prof-avatar').value.trim();
 
   try {
+    if (selectedAvatarFile) {
+      showToast('Đang tải ảnh đại diện lên...', 'info');
+      const formData = new FormData();
+      formData.append('images', selectedAvatarFile);
+
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || 'Lỗi khi tải ảnh đại diện');
+      }
+      if (result.urls && result.urls.length > 0) {
+        avatarUrl = result.urls[0];
+      }
+    }
+
+    const payload = {
+      name: document.getElementById('prof-name').value.trim(),
+      phone: document.getElementById('prof-phone').value.trim(),
+      avatar: avatarUrl,
+      password: document.getElementById('prof-password').value
+    };
+
     const res = await fetchAPI('/auth/profile', {
       method: 'PUT',
       body: JSON.stringify(payload)
@@ -1001,6 +1039,12 @@ function openModal(modalId) {
     document.getElementById('prof-phone').value = currentUser.phone;
     document.getElementById('prof-avatar').value = currentUser.avatar || '';
     document.getElementById('prof-password').value = '';
+
+    selectedAvatarFile = null;
+    const previewImg = document.getElementById('prof-avatar-preview');
+    if (previewImg) {
+      previewImg.src = currentUser.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80';
+    }
   }
   document.getElementById(modalId)?.classList.add('open');
 }
