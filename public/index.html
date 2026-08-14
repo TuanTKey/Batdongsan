@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BatDongSan Pro - System Management & Trading Platform</title>
+  <meta name="description" content="Kênh thông tin bất động sản hàng đầu Việt Nam - Tìm kiếm nhà đất, căn hộ, biệt thự, đất nền">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Leaflet CSS for Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Header / Navigation -->
+  <header class="navbar">
+    <div class="container nav-wrapper">
+      <a href="#" class="brand-logo" onclick="handleLogoClick(); return false;">
+        <i class="fa-solid fa-building-circle-check"></i>
+        <span>BatDongSan<strong class="text-accent">PRO</strong></span>
+      </a>
+
+      <nav class="nav-menu" id="nav-menu">
+        <a href="#" class="nav-link active" id="nav-catalog" onclick="switchView('catalog'); return false;">
+          <i class="fa-solid fa-compass"></i> Khám phá
+        </a>
+        <a href="#" class="nav-link" id="nav-favorites" onclick="switchView('favorites'); return false;">
+          <i class="fa-solid fa-heart"></i> Yêu thích <span class="badge" id="fav-count">0</span>
+        </a>
+        <a href="#" class="nav-link" id="nav-chat" onclick="openChatModal(); return false;">
+          <i class="fa-solid fa-comments"></i> Tin nhắn <span class="badge" id="chat-unread-badge" style="display: none;">0</span>
+        </a>
+        <a href="#" class="nav-link" id="nav-my-props" onclick="switchView('my-properties'); return false;" style="display: none;">
+          <i class="fa-solid fa-list-check"></i> Tin bài của tôi
+        </a>
+        <a href="#" class="nav-link admin-nav-link" id="nav-admin" onclick="switchView('admin'); return false;" style="display: none;">
+          <i class="fa-solid fa-shield-halved"></i> Quản trị Admin
+        </a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn btn-primary btn-post" onclick="openPostModal()">
+          <i class="fa-solid fa-plus"></i> Đăng tin BDS
+        </button>
+        
+        <div id="guest-actions" class="auth-buttons">
+          <button class="btn btn-outline" onclick="openModal('login-modal')">Đăng nhập</button>
+          <button class="btn btn-dark" onclick="openModal('register-modal')">Đăng ký</button>
+        </div>
+
+        <div id="user-actions" class="user-profile-menu" style="display: none;">
+          <div class="avatar-wrapper" onclick="toggleUserDropdown()">
+            <img id="user-avatar-img" src="" alt="User Avatar" class="user-avatar">
+            <span id="user-display-name" class="user-name">User</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div class="dropdown-menu" id="user-dropdown">
+            <div class="dropdown-header">
+              <span class="user-role-badge" id="user-role-badge">Thành viên</span>
+              <p id="user-dropdown-email" class="user-email"></p>
+            </div>
+            <hr>
+            <a href="#" onclick="openModal('profile-modal'); return false;"><i class="fa-solid fa-user-gear"></i> Thông tin cá nhân</a>
+            <a href="#" id="dropdown-my-props-link" onclick="switchView('my-properties'); return false;"><i class="fa-solid fa-folder-open"></i> Quản lý tin bài</a>
+            <a href="#" id="dropdown-admin-link" onclick="switchView('admin'); return false;" style="display: none;"><i class="fa-solid fa-shield-halved"></i> Trang Quản trị Admin</a>
+            <hr>
+            <a href="#" class="text-danger" onclick="logout(); return false;"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="main-content">
+    
+    <!-- VIEW 1: CATALOG / HOME -->
+    <section id="view-catalog" class="view-section active">
+      <!-- Hero Banner & Filter Bar -->
+      <div class="hero-banner">
+        <div class="hero-bg-overlay"></div>
+        <div class="container hero-content">
+          <h1 class="hero-title">Tìm Kiếm Nơi An Cư & Đầu Tư Lý Tưởng</h1>
+          <p class="hero-subtitle">Hàng ngàn bất động sản xác thực tại Đà Nẵng, Hà Nội, TP.HCM</p>
+
+          <!-- Search Filter Box -->
+          <div class="search-filter-card">
+            <div class="filter-primary-row">
+              <div class="input-with-icon search-input-group">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="filter-keyword" placeholder="Nhập từ khóa, tên đường, dự án (VD: Sơn Trà, Lê Duẩn...)" onkeyup="handleSearchKeyup(event)">
+              </div>
+              <button class="btn btn-accent btn-search" onclick="applyFilters()">
+                <i class="fa-solid fa-filter"></i> Tìm kiếm
+              </button>
+            </div>
+
+            <div class="filter-secondary-grid">
+              <!-- Location -->
+              <div class="filter-item">
+                <label><i class="fa-solid fa-location-dot"></i> Địa điểm</label>
+                <select id="filter-city" onchange="applyFilters()">
+                  <option value="all">Tất cả tỉnh thành</option>
+                  <option value="Đà Nẵng">Đà Nẵng</option>
+                  <option value="Hà Nội">Hà Nội</option>
+                  <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
+                </select>
+              </div>
+
+              <!-- Property Type -->
+              <div class="filter-item">
+                <label><i class="fa-solid fa-house"></i> Loại bất động sản</label>
+                <select id="filter-type" onchange="applyFilters()">
+                  <option value="all">Tất cả loại hình</option>
+                  <option value="căn hộ">Căn hộ</option>
+                  <option value="nhà ở">Nhà ở</option>
+                  <option value="đất nền">Đất nền</option>
+                  <option value="biệt thự">Biệt thự</option>
+                  <option value="mặt bằng kinh doanh">Mặt bằng kinh doanh</option>
+                </select>
+              </div>
+
+              <!-- Price Range -->
+              <div class="filter-item">
+                <label><i class="fa-solid fa-sack-dollar"></i> Mức giá</label>
+                <select id="filter-price" onchange="applyFilters()">
+                  <option value="all">Tất cả mức giá</option>
+                  <option value="0-1000000000">Dưới 1 tỷ</option>
+                  <option value="1000000000-3000000000">Từ 1 - 3 tỷ</option>
+                  <option value="3000000000-5000000000">Từ 3 - 5 tỷ</option>
+                  <option value="5000000000-10000000000">Từ 5 - 10 tỷ</option>
+                  <option value="10000000000-999999999999">Trên 10 tỷ</option>
+                </select>
+              </div>
+
+              <!-- Area Range -->
+              <div class="filter-item">
+                <label><i class="fa-solid fa-ruler-combined"></i> Diện tích</label>
+                <select id="filter-area" onchange="applyFilters()">
+                  <option value="all">Tất cả diện tích</option>
+                  <option value="0-50">Dưới 50 m²</option>
+                  <option value="50-100">Từ 50 - 100 m²</option>
+                  <option value="100-200">Từ 100 - 200 m²</option>
+                  <option value="200-999999">Trên 200 m²</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Quick Filter Presets -->
+            <div class="quick-tags">
+              <span class="quick-tag-label"><i class="fa-solid fa-bolt"></i> Gợi ý tìm nhanh:</span>
+              <button class="tag-btn" onclick="applyPresetFilter('Đà Nẵng', 'căn hộ', '1000000000-3000000000', '50-100')">
+                🔥 Đà Nẵng | Căn hộ | 1-3 tỷ | 50-100 m²
+              </button>
+              <button class="tag-btn" onclick="applyPresetFilter('Đà Nẵng', 'đất nền', 'all', 'all')">
+                📍 Đất nền Đà Nẵng
+              </button>
+              <button class="tag-btn" onclick="applyPresetFilter('TP. Hồ Chí Minh', 'all', 'all', 'all')">
+                🏙️ TP. Hồ Chí Minh
+              </button>
+              <button class="tag-btn tag-reset" onclick="resetFilters()">
+                <i class="fa-solid fa-rotate-left"></i> Xóa bộ lọc
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Property Grid Section -->
+      <div class="container catalog-body">
+        <div class="catalog-header">
+          <div>
+            <h2 class="section-title" id="catalog-heading">Danh Sách Bất Động Sản</h2>
+            <p class="section-subtitle" id="catalog-count-text">Đang tải dữ liệu...</p>
+          </div>
+          <div class="sort-wrapper">
+            <label for="sort-select"><i class="fa-solid fa-arrow-down-short-wide"></i> Sắp xếp:</label>
+            <select id="sort-select" onchange="sortAndRenderCatalog()">
+              <option value="newest">Mới nhất</option>
+              <option value="price-asc">Giá thấp đến cao</option>
+              <option value="price-desc">Giá cao đến thấp</option>
+              <option value="area-desc">Diện tích lớn nhất</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Cards Container -->
+        <div id="property-grid" class="property-grid">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: FAVORITES -->
+    <section id="view-favorites" class="view-section container">
+      <div class="page-header">
+        <h2><i class="fa-solid fa-heart text-danger"></i> Danh Sách Bất Động Sản Đã Lưu</h2>
+        <p>Các bất động sản bạn đã đánh dấu quan tâm</p>
+      </div>
+      <div id="favorites-grid" class="property-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- VIEW 3: MY PROPERTIES -->
+    <section id="view-my-properties" class="view-section container">
+      <div class="page-header page-header-flex">
+        <div>
+          <h2><i class="fa-solid fa-list-check"></i> Quản Lý Bài Đăng Của Tôi</h2>
+          <p>Danh sách tin bất động sản do bạn đăng tải</p>
+        </div>
+        <button class="btn btn-primary" onclick="openPostModal()">
+          <i class="fa-solid fa-plus"></i> Đăng tin mới
+        </button>
+      </div>
+      <div id="my-properties-list" class="my-properties-list">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- VIEW 4: ADMIN DASHBOARD -->
+    <section id="view-admin" class="view-section container">
+      <div class="page-header">
+        <h2><i class="fa-solid fa-shield-halved text-accent"></i> Trang Quản Trị Hệ Thống (Admin)</h2>
+        <p>Thống kê, kiểm duyệt bài đăng và quản lý tài khoản thành viên</p>
+      </div>
+
+      <!-- Stats Overview Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon icon-blue"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-info">
+            <span class="stat-label">Tổng người dùng</span>
+            <h3 id="stat-total-users" class="stat-number">0</h3>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-green"><i class="fa-solid fa-building"></i></div>
+          <div class="stat-info">
+            <span class="stat-label">Tổng bài đăng</span>
+            <h3 id="stat-total-props" class="stat-number">0</h3>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-orange"><i class="fa-solid fa-clock"></i></div>
+          <div class="stat-info">
+            <span class="stat-label">Bài chờ duyệt</span>
+            <h3 id="stat-pending-props" class="stat-number">0</h3>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon icon-purple"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="stat-info">
+            <span class="stat-label">Bài đã duyệt</span>
+            <h3 id="stat-approved-props" class="stat-number">0</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" id="tab-btn-mod" onclick="switchAdminTab('mod')">
+          <i class="fa-solid fa-clipboard-check"></i> Duyệt Tin Bài (<span id="mod-pending-count">0</span>)
+        </button>
+        <button class="admin-tab-btn" id="tab-btn-users" onclick="switchAdminTab('users')">
+          <i class="fa-solid fa-users-gear"></i> Quản Lý Người Dùng
+        </button>
+      </div>
+
+      <!-- Admin Tab Content 1: Moderation Queue -->
+      <div id="admin-tab-mod" class="admin-tab-content active">
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Hình ảnh & Tiêu đề</th>
+                <th>Người đăng</th>
+                <th>Giá & Diện tích</th>
+                <th>Địa điểm</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="admin-moderation-tbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Tab Content 2: Users List -->
+      <div id="admin-tab-users" class="admin-tab-content">
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Avatar & Họ tên</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Vai trò</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-tbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODALS -->
+
+  <!-- 1. PROPERTY DETAIL MODAL -->
+  <div id="detail-modal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'detail-modal')">
+    <div class="modal-card modal-lg">
+      <button class="modal-close" onclick="closeModal('detail-modal')">&times;</button>
+      
+      <div class="detail-container">
+        <!-- Image Gallery Carousel -->
+        <div class="detail-gallery">
+          <div class="main-image-wrapper">
+            <img id="detail-main-img" src="" alt="Property Detail Image">
+            <span id="detail-type-badge" class="badge-type">Loại</span>
+          </div>
+          <div class="gallery-thumbs" id="detail-thumbs"></div>
+        </div>
+
+        <!-- Property Info Header -->
+        <div class="detail-header">
+          <h2 id="detail-title" class="detail-title">Tiêu đề bài đăng</h2>
+          <p id="detail-address" class="detail-address"><i class="fa-solid fa-location-dot"></i> Địa chỉ</p>
+          
+          <div class="detail-price-box">
+            <div>
+              <span id="detail-price" class="detail-price">0 VNĐ</span>
+              <span id="detail-price-per-m2" class="detail-price-sub">~0 triệu/m²</span>
+            </div>
+            <div class="detail-area-box">
+              <i class="fa-solid fa-vector-square"></i>
+              <span id="detail-area">0 m²</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Grid: Description vs Seller Card -->
+        <div class="detail-content-grid">
+          <div class="detail-left">
+            <h4 class="detail-subheading"><i class="fa-solid fa-align-left"></i> Mô tả chi tiết</h4>
+            <p id="detail-description" class="detail-description-text"></p>
+
+            <h4 class="detail-subheading"><i class="fa-solid fa-map-location-dot"></i> Vị trí trên bản đồ</h4>
+            <div id="detail-map" class="detail-map-box"></div>
+          </div>
+
+          <div class="detail-right">
+            <!-- Seller Profile Card -->
+            <div class="seller-card">
+              <div class="seller-header">
+                <img id="detail-seller-avatar" src="" alt="Seller Avatar" class="seller-avatar">
+                <div>
+                  <h4 id="detail-seller-name" class="seller-name">Tên người đăng</h4>
+                  <span class="seller-verified"><i class="fa-solid fa-circle-check"></i> Đã xác thực</span>
+                </div>
+              </div>
+              
+              <div class="seller-contact-actions">
+                <a id="detail-phone-btn" href="tel:" class="btn btn-phone btn-block">
+                  <i class="fa-solid fa-phone-volume"></i> Gọi ngay: <strong id="detail-phone-num">...</strong>
+                </a>
+                <button id="detail-chat-btn" class="btn btn-primary btn-block" onclick="startChatFromDetail()">
+                  <i class="fa-solid fa-comments"></i> Chat với người bán
+                </button>
+                <button id="detail-fav-btn" class="btn btn-outline btn-block" onclick="toggleCurrentDetailFavorite()">
+                  <i class="fa-solid fa-heart"></i> Lưu vào Yêu thích
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. CREATE / EDIT PROPERTY MODAL -->
+  <div id="post-modal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'post-modal')">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('post-modal')">&times;</button>
+      <h3 id="post-modal-title" class="modal-title"><i class="fa-solid fa-pen-to-square text-accent"></i> Đăng Tin Bất Động Sản</h3>
+      
+      <form id="post-form" onsubmit="handlePostSubmit(event)">
+        <input type="hidden" id="post-id">
+        
+        <div class="form-group">
+          <label>Tiêu đề bài đăng *</label>
+          <input type="text" id="post-title" required placeholder="VD: Căn hộ cao cấp 2PN view biển Sơn Trà Đà Nẵng">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Loại bất động sản *</label>
+            <select id="post-type" required>
+              <option value="căn hộ">Căn hộ</option>
+              <option value="nhà ở">Nhà ở</option>
+              <option value="đất nền">Đất nền</option>
+              <option value="biệt thự">Biệt thự</option>
+              <option value="mặt bằng kinh doanh">Mặt bằng kinh doanh</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Thành phố / Tỉnh *</label>
+            <select id="post-city" required>
+              <option value="Đà Nẵng">Đà Nẵng</option>
+              <option value="Hà Nội">Hà Nội</option>
+              <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Giá bán (VNĐ) *</label>
+            <input type="number" id="post-price" required placeholder="VD: 2200000000 (2.2 tỷ)" step="1000000">
+            <small id="price-hint" class="text-muted">Nhập giá chính xác bằng đồng VNĐ</small>
+          </div>
+
+          <div class="form-group">
+            <label>Diện tích (m²) *</label>
+            <input type="number" id="post-area" required placeholder="VD: 65" step="0.1">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Quận / Huyện</label>
+            <input type="text" id="post-district" placeholder="VD: Quận Sơn Trà">
+          </div>
+
+          <div class="form-group">
+            <label>Số điện thoại liên hệ *</label>
+            <input type="tel" id="post-phone" required placeholder="VD: 0914888999">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Địa chỉ chi tiết *</label>
+          <input type="text" id="post-address" required placeholder="VD: 120 Võ Nguyên Giáp, Phước Mỹ, Sơn Trà, Đà Nẵng">
+        </div>
+
+        <div class="form-group">
+          <label>Link hình ảnh (Phân cách bằng dấu phẩy)</label>
+          <textarea id="post-images" rows="2" placeholder="VD: https://images.unsplash.com/photo-1545324418-cc1a3fa10c00, https://images.unsplash.com/photo-1502672260266-1c1ef2d93688"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Mô tả chi tiết *</label>
+          <textarea id="post-description" rows="4" required placeholder="Mô tả thông tin bất động sản, nội thất, pháp lý, hướng nhà, tiện ích xung quanh..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('post-modal')">Hủy</button>
+          <button type="submit" class="btn btn-accent"><i class="fa-solid fa-paper-plane"></i> Gửi bài đăng</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. LOGIN MODAL -->
+  <div id="login-modal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'login-modal')">
+    <div class="modal-card modal-sm">
+      <button class="modal-close" onclick="closeModal('login-modal')">&times;</button>
+      <h3 class="modal-title text-center"><i class="fa-solid fa-right-to-bracket text-primary"></i> Đăng Nhập</h3>
+      
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="login-email" required placeholder="nguyenvana@gmail.com">
+        </div>
+        <div class="form-group">
+          <label>Mật khẩu</label>
+          <input type="password" id="login-password" required placeholder="••••••••">
+        </div>
+        <div class="form-extra">
+          <a href="#" onclick="closeModal('login-modal'); openModal('forgot-modal'); return false;">Quên mật khẩu?</a>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-right-to-bracket"></i> Đăng nhập</button>
+
+        <div class="demo-accounts-box">
+          <p><strong><i class="fa-solid fa-key"></i> Tài khoản mẫu dùng thử:</strong></p>
+          <div class="demo-btn-group">
+            <button type="button" class="btn-demo" onclick="fillDemoLogin('nguyenvana@gmail.com', 'user123')">👤 User demo</button>
+            <button type="button" class="btn-demo demo-admin" onclick="fillDemoLogin('admin@batdongsan.vn', 'admin123')">🛡️ Admin demo</button>
+          </div>
+        </div>
+
+        <p class="auth-switch-text">Chưa có tài khoản? <a href="#" onclick="closeModal('login-modal'); openModal('register-modal'); return false;">Đăng ký ngay</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. REGISTER MODAL -->
+  <div id="register-modal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'register-modal')">
+    <div class="modal-card modal-sm">
+      <button class="modal-close" onclick="closeModal('register-modal')">&times;</button>
+      <h3 class="modal-title text-center"><i class="fa-solid fa-user-plus text-primary"></i> Đăng Ký Tài Khoản</h3>
+      
+      <form onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label>Họ và tên *</label>
+          <input type="text" id="reg-name" required placeholder="Nguyễn Văn A">
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="reg-email" required placeholder="name@example.com">
+        </div>
+        <div class="form-group">
+          <label>Số điện thoại *</label>
+          <input type="tel" id="reg-phone" required placeholder="0914xxxxxx">
+        </div>
+        <div class="form-group">
+          <label>Mật khẩu *</label>
+          <input type="password" id="reg-password" required placeholder="••••••••">
+        </div>
+        <div class="form-group">
+          <label>Link Avatar (Tùy chọn)</label>
+          <input type="url" id="reg-avatar" placeholder="https://images.unsplash.com/...">
+        </div>
+        <button type="submit" class="btn btn-dark btn-block"><i class="fa-solid fa-user-check"></i> Đăng ký tài khoản</button>
+        
+        <p class="auth-switch-text">Đã có tài khoản? <a href="#" onclick="closeModal('register-modal'); openModal('login-modal'); return false;">Đăng nhập</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. FORGOT PASSWORD MODAL -->
+  <div id="forgot-modal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'forgot-modal')">
+    <div class="modal-card modal-sm">
+      <button class="modal-close" onclick="closeModal('forgot-modal')">&times;</button>
+      <h3 class="modal-title text-center"><i class="fa-solid fa-lock-open text-orange"></i> Quên Mật Khẩu</h3>
+      <p class="text-muted text-center mb-3">Nhập email đăng ký của bạn để nhận liên kết khôi phục mật khẩu</p>
+
+      <form onsubmit="handleForgotPassword(event)">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="forgot-email" required placeholder="nguyenvana@gmail.com">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-paper-plane"></i> Gửi yêu cầu</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 6. PROFILE MODAL -->
+  <div id="profile-modal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'profile-modal')">
+    <div class="modal-card modal-sm">
+      <button class="modal-close" onclick="closeModal('profile-modal')">&times;</button>
+      <h3 class="modal-title text-center"><i class="fa-solid fa-user-gear text-primary"></i> Cập Nhật Thông Tin Cá Nhân</h3>
+      
+      <form onsubmit="handleProfileUpdate(event)">
+        <div class="form-group">
+          <label>Họ và tên</label>
+          <input type="text" id="prof-name" required>
+        </div>
+        <div class="form-group">
+          <label>Email (Không thể đổi)</label>
+          <input type="email" id="prof-email" disabled readonly class="input-readonly">
+        </div>
+        <div class="form-group">
+          <label>Số điện thoại</label>
+          <input type="tel" id="prof-phone" required>
+        </div>
+        <div class="form-group">
+          <label>Link Avatar</label>
+          <input type="url" id="prof-avatar">
+        </div>
+        <div class="form-group">
+          <label>Mật khẩu mới (Bỏ trống nếu không muốn đổi)</label>
+          <input type="password" id="prof-password" placeholder="Mật khẩu mới...">
+        </div>
+        <button type="submit" class="btn btn-accent btn-block"><i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 7. CHAT MESSENGER MODAL -->
+  <div id="chat-modal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'chat-modal')">
+    <div class="modal-card modal-lg chat-modal-card">
+      <button class="modal-close" onclick="closeModal('chat-modal')">&times;</button>
+      
+      <div class="chat-wrapper">
+        <!-- Sidebar: Conversations List -->
+        <div class="chat-sidebar">
+          <div class="chat-sidebar-header">
+            <h3><i class="fa-solid fa-comments text-primary"></i> Hộp Thư Tin Nhắn</h3>
+          </div>
+          <div class="chat-threads-list" id="chat-threads-list">
+            <!-- Threads rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+          <!-- Chat Header -->
+          <div class="chat-header" id="chat-header" style="display: none;">
+            <img id="chat-partner-avatar" src="" class="chat-partner-avatar">
+            <div class="chat-header-info">
+              <h4 id="chat-partner-name">Tên người dùng</h4>
+              <p id="chat-prop-title" class="chat-prop-title">Bất động sản</p>
+            </div>
+            <div class="chat-header-price" id="chat-prop-price">0 VNĐ</div>
+          </div>
+
+          <!-- Messages Body -->
+          <div class="chat-messages-container" id="chat-messages-container">
+            <div class="chat-empty-state">
+              <i class="fa-solid fa-comments"></i>
+              <p>Chọn một cuộc trò chuyện từ danh sách bên trái để nhắn tin trực tiếp</p>
+            </div>
+          </div>
+
+          <!-- Chat Input Bar -->
+          <form class="chat-input-bar" id="chat-input-bar" onsubmit="sendChatMessage(event)" style="display: none;">
+            <input type="text" id="chat-input-text" placeholder="Nhập nội dung tin nhắn..." autocomplete="off">
+            <button type="submit" class="btn btn-primary btn-send-chat">
+              <i class="fa-solid fa-paper-plane"></i> Gửi
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Leaflet JS for Maps -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Application Main JS -->
+  <script src="app.js"></script>
+</body>
+</html>
